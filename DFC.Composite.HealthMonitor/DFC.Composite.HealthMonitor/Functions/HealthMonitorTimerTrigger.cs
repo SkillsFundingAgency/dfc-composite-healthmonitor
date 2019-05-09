@@ -1,7 +1,6 @@
 using DFC.Common.Standard.Logging;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
-using System;
 
 namespace DFC.Composite.HealthMonitor.Functions
 {
@@ -17,7 +16,7 @@ namespace DFC.Composite.HealthMonitor.Functions
         }
 
         [FunctionName("HealthMonitorTimerTrigger")]
-        public void Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer)
+        public void Run([TimerTrigger("%HealthMonitorTimerTriggerSchedule%")]TimerInfo myTimer)
         {
             _loggerHelper.LogMethodEnter(_logger);
 
