@@ -46,12 +46,16 @@ namespace DFC.Composite.HealthMonitor.Services.HealthMonitoring
                 {
                     if (_healthMonitoringFilter.Filter(region))
                     {
-                        var regionHealthEndpoint = string.Concat(region.RegionEndpoint.Replace("{0}/", string.Empty), UrlSegment.Health);
+                        string strippedPlaceholderEndpoint = region.RegionEndpoint.Replace("/{0}", string.Empty);
+                        var regionHealthEndpoint = string.Concat(strippedPlaceholderEndpoint, UrlSegment.Health);
                         var isHealthy = await _healthChecker.IsHealthy(regionHealthEndpoint);
+
                         if (isHealthy)
                         {
                             _logger.LogInformation($"Starting to mark {regionHealthEndpoint} as healthy");
+
                             await _regionService.MarkAsHealthy(region.Path, region.PageRegion);
+
                             _logger.LogInformation($"Completed marking {regionHealthEndpoint} as healthy");
                         }
                     }
