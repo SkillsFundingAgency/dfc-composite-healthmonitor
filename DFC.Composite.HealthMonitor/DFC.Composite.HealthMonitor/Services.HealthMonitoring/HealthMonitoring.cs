@@ -1,4 +1,5 @@
-﻿using DFC.Composite.HealthMonitor.Models;
+﻿using DFC.Composite.HealthMonitor.Common;
+using DFC.Composite.HealthMonitor.Models;
 using DFC.Composite.HealthMonitor.Services.HealthCheck;
 using DFC.Composite.HealthMonitor.Services.HealthMonitoringFilter;
 using DFC.Composite.HealthMonitor.Services.Paths;
@@ -45,7 +46,7 @@ namespace DFC.Composite.HealthMonitor.Services.HealthMonitoring
                 {
                     if (_healthMonitoringFilter.Filter(region))
                     {
-                        var regionHealthEndpoint = string.Concat(region.RegionEndpoint.Replace("{0}/", string.Empty), "/health");
+                        var regionHealthEndpoint = string.Concat(region.RegionEndpoint.Replace("{0}/", string.Empty), UrlSegment.Health);
                         var isHealthy = await _healthChecker.IsHealthy(regionHealthEndpoint);
                         if (isHealthy)
                         {
