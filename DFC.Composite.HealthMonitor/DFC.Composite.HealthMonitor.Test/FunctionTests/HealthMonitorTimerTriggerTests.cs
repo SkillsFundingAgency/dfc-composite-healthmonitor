@@ -1,8 +1,5 @@
-﻿using NUnit.Framework;
-
-namespace DFC.Composite.HealthMonitor.Test.FunctionTests
+﻿namespace DFC.Composite.HealthMonitor.Test.FunctionTests
 {
-    [TestFixture]
     public class HealthMonitorTimerTriggerTests
     {
     }

@@ -1,5 +1,4 @@
-﻿using DFC.Composite.HealthMonitor.Models;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace DFC.Composite.HealthMonitor.Services.HealthMonitoring
 {
