@@ -31,7 +31,7 @@ namespace DFC.Composite.HealthMonitor.Services.HealthCheck
                 result = response != null && response.StatusCode == HttpStatusCode.OK;
                 if (!result)
                 {
-                    _logger.LogInformation($"Response from {url} was {result.ToString()}");
+                    _logger.LogInformation($"Response from {url}. Data about the response is {response.ToString()}");
                 }
             }
             catch (Exception ex)
