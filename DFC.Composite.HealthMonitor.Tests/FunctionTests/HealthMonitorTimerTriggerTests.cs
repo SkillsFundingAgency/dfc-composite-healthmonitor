@@ -1,4 +1,4 @@
-﻿namespace DFC.Composite.HealthMonitor.Test.FunctionTests
+﻿namespace DFC.Composite.HealthMonitor.Tests.FunctionTests
 {
     public class HealthMonitorTimerTriggerTests
     {
