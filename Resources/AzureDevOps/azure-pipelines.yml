@@ -23,7 +23,7 @@ stages:
       - msbuild
       - visualstudio
     steps:
-    - template: AzureDevOpsTemplates\Build\StepTemplates\dfc-dotnetcore-build.yml@dfc-devops
+    - template: AzureDevOpsTemplates\Build\StepTemplates\dfc-dotnetcore-build-sonar.yml@dfc-devops
       parameters:
         SolutionBaseName: $(SolutionBaseName)
         BuildPlatform: 'any cpu'
