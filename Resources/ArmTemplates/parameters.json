@@ -1,0 +1,36 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "compuiSharedResourceGroup": {
+            "value": "__CompositeUiSharedResourceGroup__"
+        },
+        "compuiSharedStorageAccountName": {
+            "value": "__CompositeUiSharedStorageAccountName__"
+        },
+        "aseHostingEnvironmentName": {
+            "value": "__aseHostingEnvironmentName__"
+        },
+        "aseResourceGroup": {
+            "value": "__aseResourceGroup__"
+        },
+        "aspSize": {
+            "value": "__aspSize__"
+        },
+        "aspTier": {
+            "value": "__aspTier__"
+        },
+        "environment": {
+            "value": "__ReleaseEnvironmentName__",
+            "metadata": {
+                "comment": "Bug in tokenisation task prevents referencing Release.EnvironmentName directly.  https://github.com/TotalALM/VSTS-Tasks/issues/29"
+            }
+        },
+        "sharedAppServicePlanName": {
+            "value": "__SharedAppServicePlanName__"
+        },
+        "sharedAppServicePlanResourceGroup": {
+            "value": "__CompositeUiSharedResourceGroup__"
+        }
+    }
+}

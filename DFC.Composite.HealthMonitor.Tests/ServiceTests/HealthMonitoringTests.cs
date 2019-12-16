@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace DFC.Composite.HealthMonitor.Test.ServiceTests
+namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
 {
     public class HealthMonitoringTests
     {

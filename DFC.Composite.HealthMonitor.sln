@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Composite.HealthMonitor", "DFC.Composite.HealthMonitor\DFC.Composite.HealthMonitor.csproj", "{DEA04469-2308-4A08-AE94-B3F21F7ED2CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.Composite.HealthMonitor.Test", "DFC.Composite.HealthMonitor.Test\DFC.Composite.HealthMonitor.Test.csproj", "{BFA99F4B-969D-4C2C-A903-D5A823268621}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.Composite.HealthMonitor.Tests", "DFC.Composite.HealthMonitor.Tests\DFC.Composite.HealthMonitor.Tests.csproj", "{BFA99F4B-969D-4C2C-A903-D5A823268621}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
