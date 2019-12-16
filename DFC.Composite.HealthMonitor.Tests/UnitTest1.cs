@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace DFC.Composite.HealthMonitor.UnitTests
+namespace DFC.Composite.HealthMonitor.Tests
 {
     public class UnitTest1
     {
