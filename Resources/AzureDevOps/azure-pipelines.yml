@@ -1,7 +1,8 @@
 variables:
-    SolutionBaseName: 'DFC.Composite.HealthMonitor'
-    BuildPlatform: 'any cpu'
-    BuildConfiguration: 'release'
+  ArmTemplateRoot: '$(Build.SourcesDirectory)\Resources\ArmTemplates'
+  SolutionBaseName: 'DFC.Composite.HealthMonitor'
+  BuildPlatform: 'any cpu'
+  BuildConfiguration: 'release'
 
 resources:
   repositories:
@@ -23,6 +24,10 @@ stages:
       - msbuild
       - visualstudio
     steps:
+    - template: AzureDevOpsTemplates\Build\StepTemplates\dfc-arm-build.yml@dfc-devops
+      parameters:
+        ArmTemplateRoot: $(ArmTemplateRoot)
+        SolutionBaseName: $(SolutionBaseName)
     - template: AzureDevOpsTemplates\Build\StepTemplates\dfc-dotnetcore-build-sonar.yml@dfc-devops
       parameters:
         SolutionBaseName: $(SolutionBaseName)
