@@ -1,11 +1,32 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Composite.HealthMonitor", "DFC.Composite.HealthMonitor\DFC.Composite.HealthMonitor.csproj", "{DEA04469-2308-4A08-AE94-B3F21F7ED2CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.Composite.HealthMonitor.Tests", "DFC.Composite.HealthMonitor.Tests\DFC.Composite.HealthMonitor.Tests.csproj", "{BFA99F4B-969D-4C2C-A903-D5A823268621}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Composite.HealthMonitor.UnitTests", "DFC.Composite.HealthMonitor.UnitTests\DFC.Composite.HealthMonitor.UnitTests.csproj", "{BFA99F4B-969D-4C2C-A903-D5A823268621}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solution Items", "{3A72B016-7AF6-46C1-AF98-D3262C29D18E}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		CODEOWNERS = CODEOWNERS
+		DFC.Digital.CodeAnalysis.ruleset = DFC.Digital.CodeAnalysis.ruleset
+		LICENSE = LICENSE
+		README.md = README.md
+		stylecop.json = stylecop.json
+		UnitTests.CodeAnalysis.ruleset = UnitTests.CodeAnalysis.ruleset
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{91A8C2B4-C112-449D-93B3-4B2D43233609}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{76EEFBF2-7BC7-44D3-973B-6463AEA522EB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Composite.HealthMonitor.Services", "DFC.Composite.HealthMonitor.Services\DFC.Composite.HealthMonitor.Services.csproj", "{A5531C69-3D29-4272-AF65-B3D16B0CDDE3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{AFCD4AFA-C6F2-4011-B61A-EB2C2F05B410}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Composite.HealthMonitor.Data", "DFC.Composite.HealthMonitor.Data\DFC.Composite.HealthMonitor.Data.csproj", "{E96E1D4B-E11B-4208-A098-92545065D70A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,9 +42,22 @@ Global
 		{BFA99F4B-969D-4C2C-A903-D5A823268621}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFA99F4B-969D-4C2C-A903-D5A823268621}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFA99F4B-969D-4C2C-A903-D5A823268621}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5531C69-3D29-4272-AF65-B3D16B0CDDE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5531C69-3D29-4272-AF65-B3D16B0CDDE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5531C69-3D29-4272-AF65-B3D16B0CDDE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5531C69-3D29-4272-AF65-B3D16B0CDDE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E96E1D4B-E11B-4208-A098-92545065D70A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E96E1D4B-E11B-4208-A098-92545065D70A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E96E1D4B-E11B-4208-A098-92545065D70A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E96E1D4B-E11B-4208-A098-92545065D70A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BFA99F4B-969D-4C2C-A903-D5A823268621} = {91A8C2B4-C112-449D-93B3-4B2D43233609}
+		{A5531C69-3D29-4272-AF65-B3D16B0CDDE3} = {76EEFBF2-7BC7-44D3-973B-6463AEA522EB}
+		{E96E1D4B-E11B-4208-A098-92545065D70A} = {AFCD4AFA-C6F2-4011-B61A-EB2C2F05B410}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF929B80-6B97-4149-952C-2E8CC46E0C90}

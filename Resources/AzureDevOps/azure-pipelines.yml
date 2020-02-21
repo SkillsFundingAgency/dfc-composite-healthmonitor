@@ -10,7 +10,7 @@ resources:
   - repository: dfc-devops
     type: github
     name: SkillsFundingAgency/dfc-devops
-    ref: refs/tags/v1.8.5
+    ref: refs/tags/v1.8.6
     endpoint: 'GitHub (ESFA)'
 
 stages:
@@ -31,5 +31,8 @@ stages:
     - template: AzureDevOpsTemplates\Build\StepTemplates\dfc-dotnetcore-build-sonar.yml@dfc-devops
       parameters:
         SolutionBaseName: $(SolutionBaseName)
-        BuildPlatform: 'any cpu'
-        BuildConfiguration: 'release'
+        BuildPlatform: $(BuildPlatform)
+        BuildConfiguration: $(BuildConfiguration)
+        DotNetCoreVersion: 3.1.101      
+        TestSuffix: UnitTests
+
