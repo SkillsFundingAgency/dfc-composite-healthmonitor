@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
     <CodeAnalysisRuleSet>../DFC.Digital.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
     <LangVersion>latest</LangVersion>
-    <ProjectGuid>{DEA04469-2308-4A08-AE94-B3F21F7ED2CA}</ProjectGuid>
+    <ProjectGuid>{A5531C69-3D29-4272-AF65-B3D16B0CDDE3}</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
     <AdditionalFiles Include="..\stylecop.json" Link="../stylecop.json" />
@@ -23,14 +24,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DFC.Composite.HealthMonitor.Services\DFC.Composite.HealthMonitor.Services.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="host.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="local.settings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\DFC.Composite.HealthMonitor.Data\DFC.Composite.HealthMonitor.Data.csproj" />
   </ItemGroup>
 </Project>

@@ -2,33 +2,34 @@ using DFC.Common.Standard.Logging;
 using DFC.Composite.HealthMonitor.Services.HealthMonitoring;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace DFC.Composite.HealthMonitor.Functions
 {
     public class HealthMonitorTimerTrigger
     {
-        private readonly ILogger<HealthMonitorTimerTrigger> _logger;
-        private readonly ILoggerHelper _loggerHelper;
-        private readonly IHealthMonitoring _healthMonitoring;
+        private readonly ILogger<HealthMonitorTimerTrigger> logger;
+        private readonly ILoggerHelper loggerHelper;
+        private readonly IHealthMonitoringProcessor healthMonitoringProcessor;
 
         public HealthMonitorTimerTrigger(
-            ILogger<HealthMonitorTimerTrigger> logger, 
-            ILoggerHelper loggerHelper, 
-            IHealthMonitoring healthMonitoring)
+            ILogger<HealthMonitorTimerTrigger> logger,
+            ILoggerHelper loggerHelper,
+            IHealthMonitoringProcessor healthMonitoringProcessor)
         {
-            _logger = logger;
-            _loggerHelper = loggerHelper;
-            _healthMonitoring = healthMonitoring;
+            this.logger = logger;
+            this.loggerHelper = loggerHelper;
+            this.healthMonitoringProcessor = healthMonitoringProcessor;
         }
 
         [FunctionName("HealthMonitorTimerTrigger")]
-        public void Run([TimerTrigger("%HealthMonitorTimerTriggerSchedule%")]TimerInfo myTimer)
+        public async Task Run([TimerTrigger("%HealthMonitorTimerTriggerSchedule%")]TimerInfo myTimer)
         {
-            _loggerHelper.LogMethodEnter(_logger);
+            loggerHelper.LogMethodEnter(logger);
 
-            _healthMonitoring.Monitor();
-
-            _loggerHelper.LogMethodExit(_logger);
+            await healthMonitoringProcessor.Process().ConfigureAwait(false);
+            logger.LogTrace($"Next run of health check is {myTimer?.ScheduleStatus.Next}");
+            loggerHelper.LogMethodExit(logger);
         }
     }
 }
