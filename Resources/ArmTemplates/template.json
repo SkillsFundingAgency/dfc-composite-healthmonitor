@@ -2,6 +2,15 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "ApimProxyAddress": {
+            "type": "string"
+        },
+        "ApimKey": {
+            "type": "securestring"
+        },
+        "TimerTriggerInterval": {
+            "type": "string"
+        },
         "compuiSharedResourceGroup": {
             "type": "string"
         },
@@ -46,7 +55,10 @@
         "buildingBlocksDfcBaseUrl": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
         "resourcePrefix": "[tolower(concat('dfc-', parameters('Environment'), '-compui-health'))]",
         "functionAppName": "[concat(variables('resourcePrefix'), '-fa')]",
-        "functionAppInsightsName": "[concat(variables('resourcePrefix'), '-fa-ai')]"
+        "functionAppInsightsName": "[concat(variables('resourcePrefix'), '-fa-ai')]",
+        "IsDraftEnvironment": "[endsWith(toLower(parameters('Environment')), '-draft')]",
+        "CompositePathUrl": "[concat(parameters('ApimProxyAddress'), '/composite-ui-paths', if(variables('IsDraftEnvironment'), '-draft', ''), '/')]",
+        "CompositeRegionUrl": "[concat(parameters('ApimProxyAddress'), '/composite-ui-regions', if(variables('IsDraftEnvironment'), '-draft', ''), '/')]"
     },
     "resources": [
         {
@@ -153,6 +165,22 @@
                             {
                                 "name": "AzureWebJobsStorage",
                                 "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('compuiSharedStorageAccountName'),';AccountKey=',listKeys(resourceId(parameters('compuiSharedResourceGroup'), 'Microsoft.Storage/storageAccounts', parameters('compuiSharedStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
+                            },
+                            {
+                                "name": "HealthMonitorTimerTriggerSchedule",
+                                "value": "[parameters('TimerTriggerInterval')]"
+                            },
+                            {
+                                "name": "ApimSubscriptionKey",
+                                "value": "[parameters('ApimKey')]"
+                            },
+                            {
+                                "name": "PathsBaseUrl",
+                                "value": "[variables('CompositePathUrl')]"
+                            },
+                            {
+                                "name": "RegionsBaseUrl",
+                                "value": "[variables('CompositeRegionUrl')]"
                             }
                         ]
                     }
