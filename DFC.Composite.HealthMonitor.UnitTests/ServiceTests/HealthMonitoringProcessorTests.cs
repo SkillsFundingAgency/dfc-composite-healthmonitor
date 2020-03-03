@@ -40,6 +40,12 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
             new object[] { false, true, true },
         };
 
+        public static IEnumerable<object[]> PathExternalUrls => new List<object[]>
+        {
+            new object[] { string.Empty, false },
+            new object[] { "http://SomeExternalPathUrl", true },
+        };
+
         [Theory]
         [MemberData(nameof(HealthCheckRequiredChecks))]
         public async Task ProcessWhenUnhealthyEndpointThenMarkedAsHealthy(bool isHealthy, bool healthCheckRequired, bool markAsHealthyCalled)
@@ -77,6 +83,46 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
             {
                 A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored)).MustNotHaveHappened();
                 A.CallTo(() => regionService.MarkAsHealthy(A<string>.Ignored, A<PageRegion>.Ignored)).MustNotHaveHappened();
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(PathExternalUrls))]
+        public async Task ProcessWhenHasExternalUrlThenRegionsNotMarkedAsHealthy(string externalUrl, bool pathHasExternalUrl)
+        {
+            const string expectedRegionEndpoint = "https://expectedHost/regionEndpoint";
+            var paths = new List<PathModel> { new PathModel { Path = "path1", ExternalURL = new Uri(externalUrl, UriKind.RelativeOrAbsolute) } };
+            var regions = new List<RegionModel>
+            {
+                new RegionModel
+                {
+                    Path = paths.First().Path,
+                    RegionEndpoint = expectedRegionEndpoint,
+                    HealthCheckRequired = true,
+                    IsHealthy = false,
+                    PageRegion = PageRegion.Body,
+                },
+            };
+
+            A.CallTo(() => pathService.GetPaths()).Returns(paths);
+            A.CallTo(() => regionService.GetRegions(A<string>.Ignored)).Returns(regions);
+            A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored)).Returns(true);
+
+            // Act
+            await healthMonitoringProcessor.Process().ConfigureAwait(false);
+
+            // Assert
+            if (pathHasExternalUrl)
+            {
+                A.CallTo(() => regionService.GetRegions(A<string>.Ignored)).MustNotHaveHappened();
+                A.CallTo(() => regionService.MarkAsHealthy(A<string>.Ignored, A<PageRegion>.Ignored)).MustNotHaveHappened();
+                A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored)).MustNotHaveHappened();
+            }
+            else
+            {
+                var expectedRegionUri = new Uri($"https://expectedHost/health");
+                A.CallTo(() => healthCheckerService.IsHealthy(expectedRegionUri)).MustHaveHappenedOnceExactly();
+                A.CallTo(() => regionService.MarkAsHealthy(regions.First().Path, regions.First().PageRegion)).MustHaveHappenedOnceExactly();
             }
         }
     }

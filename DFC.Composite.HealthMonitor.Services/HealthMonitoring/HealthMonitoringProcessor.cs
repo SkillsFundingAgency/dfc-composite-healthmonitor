@@ -33,7 +33,7 @@ namespace DFC.Composite.HealthMonitor.Services.HealthMonitoring
         {
             var paths = await pathService.GetPaths().ConfigureAwait(false);
 
-            foreach (var path in paths)
+            foreach (var path in paths.Where(p => string.IsNullOrWhiteSpace(p.ExternalURL?.ToString())))
             {
                 var regions = await regionService.GetRegions(path.Path).ConfigureAwait(false);
 
