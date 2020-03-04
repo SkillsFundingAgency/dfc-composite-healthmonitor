@@ -1,17 +1,3 @@
 {
-  "version": "2.0",
-  "logging": {
-    "fileLoggingMode": "always",
-    "applicationInsights": {
-      "samplingSettings": {
-        "isEnabled": false
-      }
-    },
-    "logLevel": {
-      "default": "Information",
-      "Host.Results": "Error",
-      "Function": "Error",
-      "Host.Aggregator": "Error"
-    }
-  }
+  "version": "2.0"
 }
