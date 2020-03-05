@@ -1,6 +1,9 @@
-﻿using DFC.Common.Standard.Logging;
-using DFC.Composite.HealthMonitor;
+﻿using DFC.Composite.HealthMonitor;
 using DFC.Composite.HealthMonitor.Data.Common;
+using DFC.Composite.HealthMonitor.Services.HealthCheck;
+using DFC.Composite.HealthMonitor.Services.HealthMonitoring;
+using DFC.Composite.HealthMonitor.Services.Paths;
+using DFC.Composite.HealthMonitor.Services.Regions;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -8,10 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using DFC.Composite.HealthMonitor.Services.HealthCheck;
-using DFC.Composite.HealthMonitor.Services.HealthMonitoring;
-using DFC.Composite.HealthMonitor.Services.Paths;
-using DFC.Composite.HealthMonitor.Services.Regions;
 
 [assembly: WebJobsStartup(typeof(StartUp))]
 
@@ -66,7 +65,6 @@ namespace DFC.Composite.HealthMonitor
             services.AddTransient<IHealthMonitoringProcessor, HealthMonitoringProcessor>();
             services.AddTransient<IPathService, PathService>();
             services.AddTransient<IRegionService, RegionService>();
-            services.AddTransient<ILoggerHelper, LoggerHelper>();
         }
     }
 }
