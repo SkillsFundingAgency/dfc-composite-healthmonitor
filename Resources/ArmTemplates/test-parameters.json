@@ -25,6 +25,9 @@
         },
         "sharedAppServicePlanResourceGroup": {
             "value": "dfc-dev-compui-sharedresources-rg"
+        },
+        "enableAlerts": {
+            "value": false
         }
     }
 }
