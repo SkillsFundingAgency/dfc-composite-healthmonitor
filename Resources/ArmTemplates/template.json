@@ -47,6 +47,12 @@
         "sharedAppServicePlanResourceGroup": {
             "type": "string",
             "defaultValue": ""
+        },
+        "enableAlerts": {
+            "type": "bool",
+            "metadata": {
+                "description": "Enable or disable alerting"
+            }
         }
     },
     "variables": {
@@ -58,7 +64,8 @@
         "functionAppInsightsName": "[concat(variables('resourcePrefix'), '-fa-ai')]",
         "IsDraftEnvironment": "[endsWith(toLower(parameters('Environment')), '-draft')]",
         "CompositePathUrl": "[concat(parameters('ApimProxyAddress'), '/composite-ui-paths', if(variables('IsDraftEnvironment'), '-draft', ''), '/')]",
-        "CompositeRegionUrl": "[concat(parameters('ApimProxyAddress'), '/composite-ui-regions', if(variables('IsDraftEnvironment'), '-draft', ''), '/')]"
+        "CompositeRegionUrl": "[concat(parameters('ApimProxyAddress'), '/composite-ui-regions', if(variables('IsDraftEnvironment'), '-draft', ''), '/')]",
+        "ActionGroupName": "[concat('dfc-', replace(tolower(parameters('Environment')), '-draft', ''), '-compui-shared-actgrp')]"
     },
     "resources": [
         {
@@ -189,7 +196,89 @@
             "dependsOn": [
                 "[variables('functionAppInsightsName')]"
             ]
-        }
+        },
+        {
+          "apiVersion": "2019-05-01",
+          "name": "[concat(variables('functionAppInsightsName'), '-metric-exceptions')]",
+          "type": "Microsoft.Resources/deployments",
+          "dependsOn": [
+              "[variables('functionAppInsightsName')]"
+          ],
+          "properties": {
+              "mode": "Incremental",
+              "templateLink": {
+                  "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'Application-Insights/metric-alerts.json')]",
+                  "contentVersion": "1.0.0.0"
+              },
+              "parameters": {
+                  "enabled": {
+                      "value": "[parameters('enableAlerts')]"
+                  },
+                  "alertName": {
+                      "value": "[concat(variables('functionAppInsightsName'), '-metric-exceptions')]"
+                  },
+                  "alertSeverity": {
+                      "value": 3
+                  },
+                  "metricName": {
+                      "value": "exceptions/count"
+                  },
+                  "operator": {
+                      "value": "GreaterThan"
+                  },
+                  "threshold": {
+                      "value": "0"
+                  },
+                  "aggregation": {
+                      "value": "Count"
+                  },
+                  "windowSize": {
+                      "value": "PT5M"
+                  },
+                  "evaluationFrequency": {
+                      "value": "PT1M"
+                  },
+                  "actionGroupName": {
+                      "value": "[variables('ActionGroupName')]"
+                  },
+                  "actionGroupResourceGroup": {
+                      "value": "[parameters('compuiSharedResourceGroup')]"
+                  },
+                  "resourceId": {
+                      "value": "[resourceId('Microsoft.Insights/Components', variables('functionAppInsightsName'))]"
+                  }
+              }
+          }
+      },
+      {
+          "apiVersion": "2019-05-01",
+          "name": "[concat(variables('functionAppInsightsName'), '-failure-anomaly-v2')]",
+          "type": "Microsoft.Resources/deployments",
+          "dependsOn": [
+              "[variables('functionAppInsightsName')]"
+          ],
+          "properties": {
+              "mode": "Incremental",
+              "templateLink": {
+                  "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'Application-Insights/failure-anomaly-rule.json')]",
+                  "contentVersion": "1.0.0.0"
+              },
+              "parameters": {
+                  "alertName": {
+                      "value": "[concat(variables('functionAppInsightsName'), '-failure-anomaly-v2')]"
+                  },
+                  "enabled": {
+                      "value": "[parameters('enableAlerts')]"
+                  },
+                  "resourceId": {
+                      "value": "[resourceId('Microsoft.Insights/Components', variables('functionAppInsightsName'))]"
+                  },
+                  "actionGroupId": {
+                      "value": "[resourceId(parameters('compuiSharedResourceGroup'), 'microsoft.insights/actionGroups', variables('ActionGroupName'))]"
+                  }
+              }
+          }
+      }
     ],
     "outputs": {}
 }
