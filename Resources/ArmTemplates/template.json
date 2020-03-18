@@ -151,7 +151,7 @@
                         "value": [
                             {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
-                                "value": "~2"
+                                "value": "~3"
                             },
                             {
                                 "name": "FUNCTIONS_WORKER_RUNTIME",
