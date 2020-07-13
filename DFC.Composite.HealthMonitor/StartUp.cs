@@ -10,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 [assembly: WebJobsStartup(typeof(StartUp))]
 
@@ -31,32 +30,25 @@ namespace DFC.Composite.HealthMonitor
                 return;
             }
 
-            var config = CreateConfiguration(builder);
-            RegisterServices(builder.Services, config);
-        }
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Environment.CurrentDirectory)
+                .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables()
+                .Build();
 
-        private static IConfiguration CreateConfiguration(IWebJobsBuilder builder)
-        {
-            var configurationBuilder = new ConfigurationBuilder();
-            var descriptor = builder.Services.FirstOrDefault(d => d.ServiceType == typeof(IConfiguration));
-            if (descriptor?.ImplementationInstance is IConfigurationRoot configuration)
-            {
-                configurationBuilder.AddConfiguration(configuration);
-            }
-
-            return configurationBuilder.Build();
+            RegisterServices(builder.Services, configuration);
         }
 
         private static void RegisterServices(IServiceCollection services, IConfiguration config)
         {
             services.AddHttpClient(HttpClientName.Paths, httpClient =>
             {
-                httpClient.BaseAddress = new Uri($"{config[PathsBaseUrlSetting].TrimEnd('/')}/");
+                httpClient.BaseAddress = new Uri($"{config[PathsBaseUrlSetting]}");
                 httpClient.DefaultRequestHeaders.Add(ApimSubscriptionKeyHeaderName, config[ApimSubscriptionKeySetting]);
             });
             services.AddHttpClient(HttpClientName.Regions, httpClient =>
             {
-                httpClient.BaseAddress = new Uri($"{config[RegionsBaseUrlSetting].TrimEnd('/')}/");
+                httpClient.BaseAddress = new Uri($"{config[RegionsBaseUrlSetting]}");
                 httpClient.DefaultRequestHeaders.Add(ApimSubscriptionKeyHeaderName, config[ApimSubscriptionKeySetting]);
             });
             services.AddHttpClient(HttpClientName.Health);

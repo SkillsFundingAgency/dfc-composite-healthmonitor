@@ -67,7 +67,7 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
 
             A.CallTo(() => pathService.GetPaths()).Returns(paths);
             A.CallTo(() => regionService.GetRegions(A<string>.Ignored)).Returns(regions);
-            A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored)).Returns(true);
+            A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored, A<bool>.Ignored)).Returns(true);
 
             // Act
             await healthMonitoringProcessor.Process().ConfigureAwait(false);
@@ -75,13 +75,13 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
             // Assert
             if (markAsHealthyCalled)
             {
-                var expectedRegionUri = new Uri($"https://expectedHost/health");
-                A.CallTo(() => healthCheckerService.IsHealthy(expectedRegionUri)).MustHaveHappenedOnceExactly();
+                var expectedRegionUri = new Uri(expectedRegionEndpoint);
+                A.CallTo(() => healthCheckerService.IsHealthy(expectedRegionUri, A<bool>.Ignored)).MustHaveHappenedOnceExactly();
                 A.CallTo(() => regionService.MarkAsHealthy(regions.First().Path, regions.First().PageRegion)).MustHaveHappenedOnceExactly();
             }
             else
             {
-                A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored)).MustNotHaveHappened();
+                A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored, A<bool>.Ignored)).MustNotHaveHappened();
                 A.CallTo(() => regionService.MarkAsHealthy(A<string>.Ignored, A<PageRegion>.Ignored)).MustNotHaveHappened();
             }
         }
@@ -106,7 +106,7 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
 
             A.CallTo(() => pathService.GetPaths()).Returns(paths);
             A.CallTo(() => regionService.GetRegions(A<string>.Ignored)).Returns(regions);
-            A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored)).Returns(true);
+            A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored, A<bool>.Ignored)).Returns(true);
 
             // Act
             await healthMonitoringProcessor.Process().ConfigureAwait(false);
@@ -116,12 +116,12 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
             {
                 A.CallTo(() => regionService.GetRegions(A<string>.Ignored)).MustNotHaveHappened();
                 A.CallTo(() => regionService.MarkAsHealthy(A<string>.Ignored, A<PageRegion>.Ignored)).MustNotHaveHappened();
-                A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored)).MustNotHaveHappened();
+                A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored, A<bool>.Ignored)).MustNotHaveHappened();
             }
             else
             {
-                var expectedRegionUri = new Uri($"https://expectedHost/health");
-                A.CallTo(() => healthCheckerService.IsHealthy(expectedRegionUri)).MustHaveHappenedOnceExactly();
+                var expectedRegionUri = new Uri(expectedRegionEndpoint);
+                A.CallTo(() => healthCheckerService.IsHealthy(expectedRegionUri, A<bool>.Ignored)).MustHaveHappenedOnceExactly();
                 A.CallTo(() => regionService.MarkAsHealthy(regions.First().Path, regions.First().PageRegion)).MustHaveHappenedOnceExactly();
             }
         }

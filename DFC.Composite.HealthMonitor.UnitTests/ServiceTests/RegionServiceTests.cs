@@ -3,6 +3,7 @@ using DFC.Composite.HealthMonitor.Data.Models;
 using DFC.Composite.HealthMonitor.Services.Regions;
 using DFC.Composite.HealthMonitor.Tests.FakeHttpHandlers;
 using FakeItEasy;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,13 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
 {
     public class RegionServiceTests
     {
+        private readonly ILogger<RegionService> defaultLogger;
+
+        public RegionServiceTests()
+        {
+            defaultLogger = A.Fake<ILogger<RegionService>>();
+        }
+
         [Fact]
         public async Task GetRegionsReturnsListOfRegions()
         {
@@ -45,7 +53,7 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
             A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
             A.CallTo(() => httpClientFactory.CreateClient(A<string>.Ignored)).Returns(httpClient);
 
-            var regionService = new RegionService(httpClientFactory);
+            var regionService = new RegionService(httpClientFactory, defaultLogger);
 
             // Act
             var result = await regionService.GetRegions("path1").ConfigureAwait(false);
@@ -66,20 +74,20 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
             A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
             A.CallTo(() => httpClientFactory.CreateClient(A<string>.Ignored)).Returns(httpClient);
 
-            var regionService = new RegionService(httpClientFactory);
+            var regionService = new RegionService(httpClientFactory, defaultLogger);
 
             // Assert
             await Assert.ThrowsAsync<HttpRequestException>(async () => await regionService.GetRegions("path1").ConfigureAwait(false)).ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public async Task MarkAsHealthyReturnsAppropriateResponseWhenPatchMessageSent(bool success)
+        [InlineData(true, HttpStatusCode.OK)]
+        [InlineData(false, HttpStatusCode.BadRequest)]
+        public async Task MarkAsHealthyReturnsAppropriateResponseWhenPatchMessageSent(bool success, HttpStatusCode statusCode)
         {
             // Arrange
             var httpClientFactory = A.Fake<IHttpClientFactory>();
-            using var httpResponse = new HttpResponseMessage { StatusCode = success ? HttpStatusCode.OK : HttpStatusCode.BadRequest };
+            using var httpResponse = new HttpResponseMessage { StatusCode = statusCode };
             var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
             using var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
             using var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = new Uri("http://baseaddress.com") };
@@ -87,13 +95,30 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
             A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
             A.CallTo(() => httpClientFactory.CreateClient(A<string>.Ignored)).Returns(httpClient);
 
-            var regionService = new RegionService(httpClientFactory);
+            var regionService = new RegionService(httpClientFactory, defaultLogger);
 
             // Act
             var response = await regionService.MarkAsHealthy("path1", PageRegion.Body).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(success, response);
+        }
+
+        [Fact]
+        public async Task MarkAsHealthyCatchesExceoptionTest()
+        {
+            // Arrange
+            var httpClientFactory = A.Fake<IHttpClientFactory>();
+
+            A.CallTo(() => httpClientFactory.CreateClient(A<string>.Ignored)).Throws<HttpRequestException>();
+
+            var regionService = new RegionService(httpClientFactory, defaultLogger);
+
+            // Act
+            var response = await regionService.MarkAsHealthy("path1", PageRegion.Body).ConfigureAwait(false);
+
+            // Assert
+            Assert.False(response);
         }
     }
 }

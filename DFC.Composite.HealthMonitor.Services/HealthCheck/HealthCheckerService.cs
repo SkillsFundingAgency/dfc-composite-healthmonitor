@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using System;
-using System.Net;
 using System.Net.Http;
 using System.Net.Mime;
 using System.Threading.Tasks;
@@ -20,7 +19,7 @@ namespace DFC.Composite.HealthMonitor.Services.HealthCheck
             this.logger = logger;
         }
 
-        public async Task<bool> IsHealthy(Uri url)
+        public async Task<bool> IsHealthy(Uri url, bool treatNotFoundAsSuccessCode)
         {
             try
             {
@@ -28,24 +27,31 @@ namespace DFC.Composite.HealthMonitor.Services.HealthCheck
                 client.DefaultRequestHeaders.Add(HeaderNames.Accept, MediaTypeNames.Text.Html);
 
                 var response = await client.GetAsync(url).ConfigureAwait(false);
-                return ValidateResponse(url, response);
+                return ValidateResponse(url, response, treatNotFoundAsSuccessCode);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Error from Health url '{url}'");
-                throw;
+                logger.LogError(ex, $"Error from Health checking url '{url}'");
+                return false;
             }
         }
 
-        private bool ValidateResponse(Uri url, HttpResponseMessage response)
+        private bool ValidateResponse(Uri url, HttpResponseMessage response, bool treatNotFoundAsSuccessCode)
         {
-            var okResult = response?.StatusCode == HttpStatusCode.OK;
-            if (!okResult)
+            if (response.IsSuccessStatusCode)
             {
-                logger.LogInformation($"Response from Health url '{url}' returned unsuccessfully. Status code received: {response?.StatusCode.ToString()}");
+                return true;
             }
 
-            return okResult;
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound && treatNotFoundAsSuccessCode)
+            {
+                logger.LogWarning($"Response from Health checking url '{url}' returned {response?.StatusCode.ToString()}, but for this region is treated as a success code");
+                return true;
+            }
+
+            logger.LogWarning($"Response from Health checking url '{url}' returned unsuccessfully. Status code received: {response?.StatusCode.ToString()}");
+
+            return false;
         }
     }
 }
