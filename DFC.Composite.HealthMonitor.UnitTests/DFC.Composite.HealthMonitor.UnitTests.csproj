@@ -4,7 +4,6 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsPackable>false</IsPackable>
     <CodeAnalysisRuleSet>../UnitTests.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
-    <LangVersion>latest</LangVersion>
     <ProjectGuid>{BFA99F4B-969D-4C2C-A903-D5A823268621}</ProjectGuid>
   </PropertyGroup>
 
