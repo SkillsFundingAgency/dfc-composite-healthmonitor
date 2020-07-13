@@ -3,6 +3,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>
     <CodeAnalysisRuleSet>../DFC.Digital.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
     <ProjectGuid>{DEA04469-2308-4A08-AE94-B3F21F7ED2CA}</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
