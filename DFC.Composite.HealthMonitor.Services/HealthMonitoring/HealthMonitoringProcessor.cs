@@ -1,5 +1,4 @@
-﻿using DFC.Composite.HealthMonitor.Data.Common;
-using DFC.Composite.HealthMonitor.Services.Extensions;
+﻿using DFC.Composite.HealthMonitor.Services.Extensions;
 using DFC.Composite.HealthMonitor.Services.HealthCheck;
 using DFC.Composite.HealthMonitor.Services.Paths;
 using DFC.Composite.HealthMonitor.Services.Regions;
@@ -39,9 +38,9 @@ namespace DFC.Composite.HealthMonitor.Services.HealthMonitoring
 
                 foreach (var region in regions.Where(r => r.RequiresHealthCheck()))
                 {
-                    var regionHealthEndpoint = GenerateHealthUri(region.RegionEndpoint);
+                    var regionHealthEndpoint = new Uri(region.RegionEndpoint.Replace("{0}", Guid.NewGuid().ToString(), StringComparison.OrdinalIgnoreCase));
 
-                    var isHealthy = await healthCheckerService.IsHealthy(regionHealthEndpoint).ConfigureAwait(false);
+                    var isHealthy = await healthCheckerService.IsHealthy(regionHealthEndpoint, region.PageRegion == Data.Enums.PageRegion.Body).ConfigureAwait(false);
                     if (isHealthy)
                     {
                         logger.LogInformation($"Starting to mark {regionHealthEndpoint} as healthy");
@@ -50,12 +49,6 @@ namespace DFC.Composite.HealthMonitor.Services.HealthMonitoring
                     }
                 }
             }
-        }
-
-        private static Uri GenerateHealthUri(string regionEndpoint)
-        {
-            var endpointUri = new Uri(regionEndpoint);
-            return new Uri($"{endpointUri.Scheme}://{endpointUri.Authority}/{UrlSegment.Health.TrimStart('/')}");
         }
     }
 }

@@ -20,13 +20,16 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public async Task IsHealthyReturnsTrueWhenOkResultFromChildApp(bool isHealthy)
+        [InlineData(true, HttpStatusCode.OK, false)]
+        [InlineData(true, HttpStatusCode.NoContent, false)]
+        [InlineData(false, HttpStatusCode.NotFound, false)]
+        [InlineData(true, HttpStatusCode.NotFound, true)]
+        [InlineData(false, HttpStatusCode.BadRequest, false)]
+        public async Task IsHealthyReturnsTrueWhenSuccessResultFromChildApp(bool isHealthy, HttpStatusCode statusCode, bool treatNotFoundAsSuccessCode)
         {
             // Arrange
             var httpClientFactory = A.Fake<IHttpClientFactory>();
-            using var httpResponse = new HttpResponseMessage { StatusCode = isHealthy ? HttpStatusCode.OK : HttpStatusCode.BadRequest };
+            using var httpResponse = new HttpResponseMessage { StatusCode = statusCode };
             var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
             using var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
             using var httpClient = new HttpClient(fakeHttpMessageHandler);
@@ -35,22 +38,24 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
             var service = new HealthCheckerService(httpClientFactory, defaultLogger);
 
             // Act
-            var result = await service.IsHealthy(new Uri("http://someRegionEndpoint")).ConfigureAwait(false);
+            var result = await service.IsHealthy(new Uri("http://someRegionEndpoint"), treatNotFoundAsSuccessCode).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(isHealthy, result);
         }
 
         [Fact]
-        public async Task IsHealthyThrowsExceptionWhenExceptionThrownByChildApp()
+        public async Task IsHealthyCatchesExceptionWhenExceptionThrownByChildApp()
         {
             // Arrange
             var httpClientFactory = A.Fake<IHttpClientFactory>();
             A.CallTo(() => httpClientFactory.CreateClient(A<string>.Ignored)).Throws<Exception>();
             var service = new HealthCheckerService(httpClientFactory, defaultLogger);
 
+            var result = await service.IsHealthy(new Uri("http://someRegionEndpoint"), false).ConfigureAwait(false);
+
             // Assert
-            await Assert.ThrowsAsync<Exception>(async () => await service.IsHealthy(new Uri("http://someRegionEndpoint")).ConfigureAwait(false)).ConfigureAwait(false);
+            Assert.False(result);
         }
     }
 }

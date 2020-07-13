@@ -9,7 +9,6 @@ namespace DFC.Composite.HealthMonitor.Services.Paths
 {
     public class PathService : IPathService
     {
-        private const string GetAllPathsEndpoint = "api/paths";
         private readonly IHttpClientFactory httpClientFactory;
 
         public PathService(IHttpClientFactory httpClientFactory)
@@ -19,7 +18,7 @@ namespace DFC.Composite.HealthMonitor.Services.Paths
 
         public async Task<IEnumerable<PathModel>> GetPaths()
         {
-            var response = await httpClientFactory.CreateClient(HttpClientName.Paths).GetAsync(new Uri(GetAllPathsEndpoint, UriKind.Relative)).ConfigureAwait(false);
+            var response = await httpClientFactory.CreateClient(HttpClientName.Paths).GetAsync(new Uri("api/paths", UriKind.Relative)).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadAsAsync<IEnumerable<PathModel>>().ConfigureAwait(false);
