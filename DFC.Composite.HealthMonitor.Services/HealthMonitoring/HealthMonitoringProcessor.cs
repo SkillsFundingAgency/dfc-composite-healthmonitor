@@ -38,7 +38,7 @@ namespace DFC.Composite.HealthMonitor.Services.HealthMonitoring
 
                 foreach (var region in regions.Where(r => r.RequiresHealthCheck()))
                 {
-                    var regionHealthEndpoint = new Uri(region.RegionEndpoint.Replace("{0}", Guid.NewGuid().ToString(), StringComparison.OrdinalIgnoreCase));
+                    var regionHealthEndpoint = new Uri(region.RegionEndpoint.Replace("{0}", $"{nameof(HealthMonitoringProcessor)}.{nameof(Process)}.{Guid.NewGuid().ToString()}", StringComparison.OrdinalIgnoreCase));
 
                     var isHealthy = await healthCheckerService.IsHealthy(regionHealthEndpoint, region.PageRegion == Data.Enums.PageRegion.Body).ConfigureAwait(false);
                     if (isHealthy)
