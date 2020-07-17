@@ -29,7 +29,7 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
             healthCheckerService = A.Fake<IHealthCheckerService>();
             logger = A.Fake<ILogger<HealthMonitoringProcessor>>();
 
-            healthMonitoringProcessor = new HealthMonitoringProcessor(pathService, regionService, healthCheckerService, logger);
+            //healthMonitoringProcessor = new HealthMonitoringProcessor(pathService, regionService, healthCheckerService, logger);
         }
 
         public static IEnumerable<object[]> HealthCheckRequiredChecks => new List<object[]>

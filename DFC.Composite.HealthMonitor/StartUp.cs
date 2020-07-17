@@ -1,5 +1,6 @@
 ﻿using DFC.Composite.HealthMonitor;
 using DFC.Composite.HealthMonitor.Data.Common;
+using DFC.Composite.HealthMonitor.Services.AppRegistry;
 using DFC.Composite.HealthMonitor.Services.HealthCheck;
 using DFC.Composite.HealthMonitor.Services.HealthMonitoring;
 using DFC.Composite.HealthMonitor.Services.Paths;
@@ -18,8 +19,7 @@ namespace DFC.Composite.HealthMonitor
     [ExcludeFromCodeCoverage]
     public class StartUp : IWebJobsStartup
     {
-        private const string PathsBaseUrlSetting = "PathsBaseUrl";
-        private const string RegionsBaseUrlSetting = "RegionsBaseUrl";
+        private const string AppRegistryBaseUrlSetting = "AppRegistryBaseUrl";
         private const string ApimSubscriptionKeyHeaderName = "Ocp-Apim-Subscription-Key";
         private const string ApimSubscriptionKeySetting = "ApimSubscriptionKey";
 
@@ -41,22 +41,16 @@ namespace DFC.Composite.HealthMonitor
 
         private static void RegisterServices(IServiceCollection services, IConfiguration config)
         {
-            services.AddHttpClient(HttpClientName.Paths, httpClient =>
+            services.AddHttpClient(HttpClientName.AppRegistry, httpClient =>
             {
-                httpClient.BaseAddress = new Uri($"{config[PathsBaseUrlSetting]}");
-                httpClient.DefaultRequestHeaders.Add(ApimSubscriptionKeyHeaderName, config[ApimSubscriptionKeySetting]);
-            });
-            services.AddHttpClient(HttpClientName.Regions, httpClient =>
-            {
-                httpClient.BaseAddress = new Uri($"{config[RegionsBaseUrlSetting]}");
+                httpClient.BaseAddress = new Uri($"{config[AppRegistryBaseUrlSetting]}");
                 httpClient.DefaultRequestHeaders.Add(ApimSubscriptionKeyHeaderName, config[ApimSubscriptionKeySetting]);
             });
             services.AddHttpClient(HttpClientName.Health);
 
             services.AddTransient<IHealthCheckerService, HealthCheckerService>();
             services.AddTransient<IHealthMonitoringProcessor, HealthMonitoringProcessor>();
-            services.AddTransient<IPathService, PathService>();
-            services.AddTransient<IRegionService, RegionService>();
+            services.AddTransient<IAppRegistryService, AppRegistryService>();
         }
     }
 }

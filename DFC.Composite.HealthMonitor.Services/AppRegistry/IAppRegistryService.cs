@@ -3,11 +3,11 @@ using DFC.Composite.HealthMonitor.Data.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DFC.Composite.HealthMonitor.Services.Regions
+namespace DFC.Composite.HealthMonitor.Services.AppRegistry
 {
-    public interface IRegionService
+    public interface IAppRegistryService
     {
-        Task<IEnumerable<RegionModel>> GetRegions(string path);
+        Task<IEnumerable<AppRegistryModel>> GetPathsAndRegions();
 
         Task<bool> MarkAsHealthy(string path, PageRegion pageRegion);
     }
