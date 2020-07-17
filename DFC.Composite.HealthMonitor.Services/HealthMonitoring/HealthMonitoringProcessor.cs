@@ -1,7 +1,6 @@
-﻿using DFC.Composite.HealthMonitor.Services.Extensions;
+﻿using DFC.Composite.HealthMonitor.Services.AppRegistry;
+using DFC.Composite.HealthMonitor.Services.Extensions;
 using DFC.Composite.HealthMonitor.Services.HealthCheck;
-using DFC.Composite.HealthMonitor.Services.Paths;
-using DFC.Composite.HealthMonitor.Services.Regions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -11,32 +10,27 @@ namespace DFC.Composite.HealthMonitor.Services.HealthMonitoring
 {
     public class HealthMonitoringProcessor : IHealthMonitoringProcessor
     {
-        private readonly IPathService pathService;
-        private readonly IRegionService regionService;
         private readonly IHealthCheckerService healthCheckerService;
         private readonly ILogger<HealthMonitoringProcessor> logger;
+        private readonly IAppRegistryService appRegistryService;
 
         public HealthMonitoringProcessor(
-            IPathService pathService,
-            IRegionService regionService,
+            IAppRegistryService appRegistryService,
             IHealthCheckerService healthCheckerService,
             ILogger<HealthMonitoringProcessor> logger)
         {
-            this.pathService = pathService;
-            this.regionService = regionService;
+            this.appRegistryService = appRegistryService;
             this.healthCheckerService = healthCheckerService;
             this.logger = logger;
         }
 
         public async Task Process()
         {
-            var paths = await pathService.GetPaths().ConfigureAwait(false);
+            var appRegistry = await appRegistryService.GetPathsAndRegions().ConfigureAwait(false);
 
-            foreach (var path in paths.Where(p => string.IsNullOrWhiteSpace(p.ExternalURL?.ToString())))
+            foreach (var path in appRegistry.Where(p => string.IsNullOrWhiteSpace(p.ExternalURL?.ToString()))) 
             {
-                var regions = await regionService.GetRegions(path.Path).ConfigureAwait(false);
-
-                foreach (var region in regions.Where(r => r.RequiresHealthCheck()))
+                foreach (var region in path.Regions.Where(r => r.RequiresHealthCheck()))
                 {
                     var regionHealthEndpoint = new Uri(region.RegionEndpoint.Replace("{0}", $"{nameof(HealthMonitoringProcessor)}.{nameof(Process)}.{Guid.NewGuid().ToString()}", StringComparison.OrdinalIgnoreCase));
 
@@ -44,7 +38,7 @@ namespace DFC.Composite.HealthMonitor.Services.HealthMonitoring
                     if (isHealthy)
                     {
                         logger.LogInformation($"Starting to mark {regionHealthEndpoint} as healthy");
-                        await regionService.MarkAsHealthy(region.Path, region.PageRegion).ConfigureAwait(false);
+                        await appRegistryService.MarkAsHealthy(path.Path, region.PageRegion).ConfigureAwait(false);
                         logger.LogInformation($"Completed marking {regionHealthEndpoint} as healthy");
                     }
                 }

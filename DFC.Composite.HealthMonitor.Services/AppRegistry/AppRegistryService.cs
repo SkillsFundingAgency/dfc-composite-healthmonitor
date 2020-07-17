@@ -9,35 +9,35 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace DFC.Composite.HealthMonitor.Services.Regions
+namespace DFC.Composite.HealthMonitor.Services.AppRegistry
 {
-    public class RegionService : IRegionService
+    public class AppRegistryService : IAppRegistryService
     {
         private readonly IHttpClientFactory httpClientFactory;
-        private readonly ILogger<RegionService> logger;
+        private readonly ILogger<AppRegistryService> logger;
 
-        public RegionService(IHttpClientFactory httpClientFactory, ILogger<RegionService> logger)
+        public AppRegistryService(IHttpClientFactory httpClientFactory, ILogger<AppRegistryService> logger)
         {
             this.httpClientFactory = httpClientFactory;
             this.logger = logger;
         }
 
-        public async Task<IEnumerable<RegionModel>> GetRegions(string path)
+        public async Task<IEnumerable<AppRegistryModel>> GetPathsAndRegions()
         {
-            var response = await httpClientFactory.CreateClient(HttpClientName.Regions).GetAsync(new Uri($"api/paths/{path}/regions", UriKind.Relative)).ConfigureAwait(false);
+            var response = await httpClientFactory.CreateClient(HttpClientName.AppRegistry).GetAsync(new Uri("appregistry", UriKind.Relative)).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsAsync<IEnumerable<RegionModel>>().ConfigureAwait(false);
+            return await response.Content.ReadAsAsync<IEnumerable<AppRegistryModel>>().ConfigureAwait(false);
         }
 
         public async Task<bool> MarkAsHealthy(string path, PageRegion pageRegion)
         {
-            var url = $"api/paths/{path}/regions/{(int)pageRegion}";
+            var url = $"appregistry/{path}/regions/{(int)pageRegion}";
 
             try
             {
                 var model = new JsonPatchDocument<RegionPatch>().Add(x => x.IsHealthy, true);
-                var response = await httpClientFactory.CreateClient(HttpClientName.Regions).PatchAsJsonAsync(url, model).ConfigureAwait(false);
+                var response = await httpClientFactory.CreateClient(HttpClientName.AppRegistry).PatchAsJsonAsync(url, model).ConfigureAwait(false);
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)
