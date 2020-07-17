@@ -28,7 +28,8 @@ namespace DFC.Composite.HealthMonitor.Services.HealthMonitoring
         {
             var appRegistry = await appRegistryService.GetPathsAndRegions().ConfigureAwait(false);
 
-            foreach (var path in appRegistry.Where(p => string.IsNullOrWhiteSpace(p.ExternalURL?.ToString()))) {
+            foreach (var path in appRegistry.Where(p => string.IsNullOrWhiteSpace(p.ExternalURL?.ToString()))) 
+            {
                 foreach (var region in path.Regions.Where(r => r.RequiresHealthCheck()))
                 {
                     var regionHealthEndpoint = new Uri(region.RegionEndpoint.Replace("{0}", $"{nameof(HealthMonitoringProcessor)}.{nameof(Process)}.{Guid.NewGuid().ToString()}", StringComparison.OrdinalIgnoreCase));
