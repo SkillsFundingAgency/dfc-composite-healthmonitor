@@ -9,10 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ServiceTests\HealthMonitoringProcessorTests.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <AdditionalFiles Include="..\stylecop.json" Link="../stylecop.json" />
   </ItemGroup>
 
