@@ -190,7 +190,7 @@
                                 "value": "[variables('CompositeRegionUrl')]"
                             },
                             {
-                                "name": "Values__AppRegistryBaseUrl",
+                                "name": "AppRegistryBaseUrl",
                                 "value": "[concat(parameters('ApimProxyAddress'), '/composite-ui-appRegistry/')]"
                             }
                         ]
