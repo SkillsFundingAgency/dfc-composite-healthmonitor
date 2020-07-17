@@ -3,8 +3,6 @@ using DFC.Composite.HealthMonitor.Data.Common;
 using DFC.Composite.HealthMonitor.Services.AppRegistry;
 using DFC.Composite.HealthMonitor.Services.HealthCheck;
 using DFC.Composite.HealthMonitor.Services.HealthMonitoring;
-using DFC.Composite.HealthMonitor.Services.Paths;
-using DFC.Composite.HealthMonitor.Services.Regions;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;

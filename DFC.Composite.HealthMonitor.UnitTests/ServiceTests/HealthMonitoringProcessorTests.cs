@@ -2,8 +2,6 @@
 using DFC.Composite.HealthMonitor.Data.Models;
 using DFC.Composite.HealthMonitor.Services.HealthCheck;
 using DFC.Composite.HealthMonitor.Services.HealthMonitoring;
-using DFC.Composite.HealthMonitor.Services.Paths;
-using DFC.Composite.HealthMonitor.Services.Regions;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using System;
@@ -16,16 +14,12 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
 {
     public class HealthMonitoringProcessorTests
     {
-        private readonly IPathService pathService;
-        private readonly IRegionService regionService;
         private readonly IHealthCheckerService healthCheckerService;
         private readonly ILogger<HealthMonitoringProcessor> logger;
         private readonly IHealthMonitoringProcessor healthMonitoringProcessor;
 
         public HealthMonitoringProcessorTests()
         {
-            pathService = A.Fake<IPathService>();
-            regionService = A.Fake<IRegionService>();
             healthCheckerService = A.Fake<IHealthCheckerService>();
             logger = A.Fake<ILogger<HealthMonitoringProcessor>>();
 

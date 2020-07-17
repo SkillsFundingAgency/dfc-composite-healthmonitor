@@ -2,7 +2,6 @@
 using DFC.Composite.HealthMonitor.Data.Enums;
 using DFC.Composite.HealthMonitor.Data.Models;
 using DFC.Composite.HealthMonitor.Services.Extensions;
-using DFC.Composite.HealthMonitor.Services.Regions;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using System;
@@ -15,9 +14,9 @@ namespace DFC.Composite.HealthMonitor.Services.AppRegistry
     public class AppRegistryService : IAppRegistryService
     {
         private readonly IHttpClientFactory httpClientFactory;
-        private readonly ILogger<RegionService> logger;
+        private readonly ILogger<AppRegistryService> logger;
 
-        public AppRegistryService(IHttpClientFactory httpClientFactory, ILogger<RegionService> logger)
+        public AppRegistryService(IHttpClientFactory httpClientFactory, ILogger<AppRegistryService> logger)
         {
             this.httpClientFactory = httpClientFactory;
             this.logger = logger;

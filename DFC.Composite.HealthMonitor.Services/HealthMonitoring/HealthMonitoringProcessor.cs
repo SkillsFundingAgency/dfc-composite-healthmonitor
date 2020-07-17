@@ -1,8 +1,6 @@
 ﻿using DFC.Composite.HealthMonitor.Services.AppRegistry;
 using DFC.Composite.HealthMonitor.Services.Extensions;
 using DFC.Composite.HealthMonitor.Services.HealthCheck;
-using DFC.Composite.HealthMonitor.Services.Paths;
-using DFC.Composite.HealthMonitor.Services.Regions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -12,21 +10,15 @@ namespace DFC.Composite.HealthMonitor.Services.HealthMonitoring
 {
     public class HealthMonitoringProcessor : IHealthMonitoringProcessor
     {
-        private readonly IPathService pathService; // TODO - REMOVE
-        private readonly IRegionService regionService; // TODO - REMOVE
         private readonly IHealthCheckerService healthCheckerService;
         private readonly ILogger<HealthMonitoringProcessor> logger;
         private readonly IAppRegistryService appRegistryService;
 
         public HealthMonitoringProcessor(
-            IPathService pathService, // TODO - REMOVE
-            IRegionService regionService, // TODO - REMOVE
             IAppRegistryService appRegistryService,
             IHealthCheckerService healthCheckerService,
             ILogger<HealthMonitoringProcessor> logger)
         {
-            this.pathService = pathService; // TODO - REMOVE
-            this.regionService = regionService; // TODO - REMOVE
             this.appRegistryService = appRegistryService;
             this.healthCheckerService = healthCheckerService;
             this.logger = logger;

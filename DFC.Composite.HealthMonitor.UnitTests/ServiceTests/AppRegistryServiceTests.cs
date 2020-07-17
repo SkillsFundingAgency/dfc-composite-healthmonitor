@@ -1,6 +1,6 @@
 ﻿using DFC.Composite.HealthMonitor.Data.Enums;
 using DFC.Composite.HealthMonitor.Data.Models;
-using DFC.Composite.HealthMonitor.Services.Regions;
+using DFC.Composite.HealthMonitor.Services.AppRegistry;
 using DFC.Composite.HealthMonitor.Tests.FakeHttpHandlers;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
@@ -14,38 +14,33 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
+namespace DFC.Composite.HealthMonitor.UnitTests.ServiceTests
 {
-    public class RegionServiceTests
+    public class AppRegistryServiceTests
     {
-        private readonly ILogger<RegionService> defaultLogger;
-
-        public RegionServiceTests()
-        {
-            defaultLogger = A.Fake<ILogger<RegionService>>();
-        }
-
         [Fact]
-        public async Task GetRegionsReturnsListOfRegions()
+        public async Task GetPathsAndRegionsReturnsListOfPaths()
         {
+            var regionHead = new RegionModel() { IsHealthy = true, HealthCheckRequired = true, PageRegion = Data.Enums.PageRegion.Head };
+            var regionBody = new RegionModel() { IsHealthy = true, HealthCheckRequired = true, PageRegion = Data.Enums.PageRegion.Body };
+
             // Arrange
-            var listOfRegions = new List<RegionModel>
+            var listOfPaths = new List<AppRegistryModel>
             {
-                new RegionModel
+                new AppRegistryModel
                 {
-                    DocumentId = Guid.NewGuid(),
-                    PageRegion = PageRegion.Body,
-                    RegionEndpoint = "region1endpoint",
+                    Path = "Path1",
+                    Regions = new List<RegionModel>() { regionBody },
                 },
-                new RegionModel
+                new AppRegistryModel
                 {
-                    DocumentId = Guid.NewGuid(),
-                    PageRegion = PageRegion.BodyFooter,
-                    RegionEndpoint = "region2endpoint",
+                    Path = "Path2",
+                    Regions = new List<RegionModel>() { regionHead},
                 },
             };
-            var content = new StringContent(JsonConvert.SerializeObject(listOfRegions), Encoding.Default, "application/json");
+            var content = new StringContent(JsonConvert.SerializeObject(listOfPaths), Encoding.Default, "application/json");
             var httpClientFactory = A.Fake<IHttpClientFactory>();
+            var fakeILogger = A.Fake<ILogger<AppRegistryService>>();
             using var httpResponse = new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = content };
             var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
             using var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
@@ -53,31 +48,32 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
             A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
             A.CallTo(() => httpClientFactory.CreateClient(A<string>.Ignored)).Returns(httpClient);
 
-            var regionService = new RegionService(httpClientFactory, defaultLogger);
+            var appRegistryService = new AppRegistryService(httpClientFactory, fakeILogger);
 
             // Act
-            var result = await regionService.GetRegions("path1").ConfigureAwait(false);
+            var result = await appRegistryService.GetPathsAndRegions().ConfigureAwait(false);
 
             // Assert
-            Assert.True(result.Count() == listOfRegions.Count);
+            Assert.True(result.ToList().Count == listOfPaths.Count);
         }
 
         [Fact]
-        public async Task GetRegionsThrowsExceptionWhenNotOkFromRegionsApi()
+        public async Task GetPathsAndRegionsThrowsExceptionWhenNotOkFromPathsApi()
         {
             // Arrange
             var httpClientFactory = A.Fake<IHttpClientFactory>();
             using var httpResponse = new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest };
             var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
+            var fakeILogger = A.Fake<ILogger<AppRegistryService>>();
             using var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
             using var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = new Uri("http://baseaddress.com") };
             A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
             A.CallTo(() => httpClientFactory.CreateClient(A<string>.Ignored)).Returns(httpClient);
 
-            var regionService = new RegionService(httpClientFactory, defaultLogger);
+            var appRegistryService = new AppRegistryService(httpClientFactory, fakeILogger);
 
             // Assert
-            await Assert.ThrowsAsync<HttpRequestException>(async () => await regionService.GetRegions("path1").ConfigureAwait(false)).ConfigureAwait(false);
+            await Assert.ThrowsAsync<HttpRequestException>(async () => await appRegistryService.GetPathsAndRegions().ConfigureAwait(false)).ConfigureAwait(false);
         }
 
         [Theory]
@@ -89,16 +85,17 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
             var httpClientFactory = A.Fake<IHttpClientFactory>();
             using var httpResponse = new HttpResponseMessage { StatusCode = statusCode };
             var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
+            var fakeILogger = A.Fake<ILogger<AppRegistryService>>();
             using var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
             using var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = new Uri("http://baseaddress.com") };
 
             A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
             A.CallTo(() => httpClientFactory.CreateClient(A<string>.Ignored)).Returns(httpClient);
 
-            var regionService = new RegionService(httpClientFactory, defaultLogger);
+            var appRegistryService = new AppRegistryService(httpClientFactory, fakeILogger);
 
             // Act
-            var response = await regionService.MarkAsHealthy("path1", PageRegion.Body).ConfigureAwait(false);
+            var response = await appRegistryService.MarkAsHealthy("path1", PageRegion.Body).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(success, response);
@@ -109,13 +106,14 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
         {
             // Arrange
             var httpClientFactory = A.Fake<IHttpClientFactory>();
+            var fakeILogger = A.Fake<ILogger<AppRegistryService>>();
 
             A.CallTo(() => httpClientFactory.CreateClient(A<string>.Ignored)).Throws<HttpRequestException>();
 
-            var regionService = new RegionService(httpClientFactory, defaultLogger);
+            var appRegistryService = new AppRegistryService(httpClientFactory, fakeILogger);
 
             // Act
-            var response = await regionService.MarkAsHealthy("path1", PageRegion.Body).ConfigureAwait(false);
+            var response = await appRegistryService.MarkAsHealthy("path1", PageRegion.Body).ConfigureAwait(false);
 
             // Assert
             Assert.False(response);
