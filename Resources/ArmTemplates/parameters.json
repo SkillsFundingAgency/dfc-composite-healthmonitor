@@ -1,0 +1,48 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ApimProxyAddress": {
+            "value": "__ApimProxyAddress__"
+        },
+        "ApimKey": {
+            "value": "__ApimCompositeKey__"
+        },
+        "TimerTriggerInterval": {
+            "value": "__HealthMonitorTimer__"
+        },
+        "compuiSharedResourceGroup": {
+            "value": "__CompositeUiSharedResourceGroup__"
+        },
+        "compuiSharedStorageAccountName": {
+            "value": "__CompositeUiSharedStorageAccountName__"
+        },
+        "aseHostingEnvironmentName": {
+            "value": "__aseHostingEnvironmentName__"
+        },
+        "aseResourceGroup": {
+            "value": "__aseResourceGroup__"
+        },
+        "aspSize": {
+            "value": "__aspSize__"
+        },
+        "aspTier": {
+            "value": "__aspTier__"
+        },
+        "environment": {
+            "value": "__ReleaseEnvironmentName__",
+            "metadata": {
+                "comment": "Bug in tokenisation task prevents referencing Release.EnvironmentName directly.  https://github.com/TotalALM/VSTS-Tasks/issues/29"
+            }
+        },
+        "sharedAppServicePlanName": {
+            "value": "__SharedAppServicePlanName__"
+        },
+        "sharedAppServicePlanResourceGroup": {
+            "value": "__CompositeUiSharedResourceGroup__"
+        },
+        "enableAlerts": {
+            "value": __EnableAzureMonitorAlerting__
+        }
+    }
+}

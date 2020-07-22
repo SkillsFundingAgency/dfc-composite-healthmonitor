@@ -1,0 +1,10 @@
+﻿{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "HealthMonitorTimerTriggerSchedule": "<-- Timer trigger interval -->",
+    "ApimSubscriptionKey": "<-- Apim Subscription Key -->",
+    "AppRegistryBaseUrl": "<-- AppRegistry Url under APIM -->",
+  }
+}

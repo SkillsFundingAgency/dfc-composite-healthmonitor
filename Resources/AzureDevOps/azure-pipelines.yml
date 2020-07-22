@@ -1,7 +1,8 @@
 variables:
-    SolutionBaseName: 'DFC.Composite.HealthMonitor'
-    BuildPlatform: 'any cpu'
-    BuildConfiguration: 'release'
+  ArmTemplateRoot: '$(Build.SourcesDirectory)\Resources\ArmTemplates'
+  SolutionBaseName: 'DFC.Composite.HealthMonitor'
+  BuildPlatform: 'any cpu'
+  BuildConfiguration: 'release'
 
 resources:
   repositories:
@@ -9,7 +10,7 @@ resources:
   - repository: dfc-devops
     type: github
     name: SkillsFundingAgency/dfc-devops
-    ref: refs/tags/v1.8.5
+    ref: refs/tags/v1.11.2
     endpoint: 'GitHub (ESFA)'
 
 stages:
@@ -23,8 +24,15 @@ stages:
       - msbuild
       - visualstudio
     steps:
+    - template: AzureDevOpsTemplates\Build\StepTemplates\dfc-arm-build.yml@dfc-devops
+      parameters:
+        ArmTemplateRoot: $(ArmTemplateRoot)
+        SolutionBaseName: $(SolutionBaseName)
     - template: AzureDevOpsTemplates\Build\StepTemplates\dfc-dotnetcore-build-sonar.yml@dfc-devops
       parameters:
         SolutionBaseName: $(SolutionBaseName)
-        BuildPlatform: 'any cpu'
-        BuildConfiguration: 'release'
+        BuildPlatform: $(BuildPlatform)
+        BuildConfiguration: $(BuildConfiguration)
+        DotNetCoreVersion: 3.1.101      
+        TestSuffix: UnitTests
+

@@ -1,0 +1,33 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ApimProxyAddress": {
+            "value": "https://foo.api.nationalcareersservice.org.uk"
+        },
+        "ApimKey": {
+            "value": "0123456789ABCDEF"
+        },
+        "TimerTriggerInterval": {
+            "value": "0 */5 * * * *"
+        },
+        "compuiSharedResourceGroup": {
+            "value": "dfc-dev-compui-sharedresources-rg"
+        },
+        "compuiSharedStorageAccountName": {
+            "value": "dfcdevcompuisharedstr"
+        },
+        "environment": {
+            "value": "FOO"
+        },
+        "sharedAppServicePlanName": {
+            "value": "dfc-dev-compui-shared-asp"
+        },
+        "sharedAppServicePlanResourceGroup": {
+            "value": "dfc-dev-compui-sharedresources-rg"
+        },
+        "enableAlerts": {
+            "value": false
+        }
+    }
+}
