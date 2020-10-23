@@ -95,7 +95,7 @@ namespace DFC.Composite.HealthMonitor.UnitTests.ServiceTests
             var appRegistryService = new AppRegistryService(httpClientFactory, fakeILogger);
 
             // Act
-            var response = await appRegistryService.MarkAsHealthy("path1", PageRegion.Body).ConfigureAwait(false);
+            var response = await appRegistryService.MarkRegionAsHealthy("path1", PageRegion.Body).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(success, response);
@@ -113,7 +113,7 @@ namespace DFC.Composite.HealthMonitor.UnitTests.ServiceTests
             var appRegistryService = new AppRegistryService(httpClientFactory, fakeILogger);
 
             // Act
-            var response = await appRegistryService.MarkAsHealthy("path1", PageRegion.Body).ConfigureAwait(false);
+            var response = await appRegistryService.MarkRegionAsHealthy("path1", PageRegion.Body).ConfigureAwait(false);
 
             // Assert
             Assert.False(response);

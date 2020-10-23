@@ -88,12 +88,12 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
                 var firstItem = listOfPaths.First();
                 var pageRegion = firstItem.Regions.First();
                 A.CallTo(() => healthCheckerService.IsHealthy(expectedRegionUri, A<bool>.Ignored)).MustHaveHappened();
-                A.CallTo(() => appRegistryService.MarkAsHealthy(firstItem.Path, pageRegion.PageRegion)).MustHaveHappened();
+                A.CallTo(() => appRegistryService.MarkRegionAsHealthy(firstItem.Path, pageRegion.PageRegion)).MustHaveHappened();
             }
             else
             {
                 A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored, A<bool>.Ignored)).MustNotHaveHappened();
-                A.CallTo(() => appRegistryService.MarkAsHealthy(A<string>.Ignored, A<PageRegion>.Ignored)).MustNotHaveHappened();
+                A.CallTo(() => appRegistryService.MarkRegionAsHealthy(A<string>.Ignored, A<PageRegion>.Ignored)).MustNotHaveHappened();
             }
         }
 
@@ -130,7 +130,7 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
             // Assert
             if (pathHasExternalUrl)
             {
-                A.CallTo(() => appRegistryService.MarkAsHealthy(A<string>.Ignored, A<PageRegion>.Ignored)).MustNotHaveHappened();
+                A.CallTo(() => appRegistryService.MarkRegionAsHealthy(A<string>.Ignored, A<PageRegion>.Ignored)).MustNotHaveHappened();
                 A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored, A<bool>.Ignored)).MustNotHaveHappened();
             }
             else
@@ -139,7 +139,7 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
                 var firstItem = listOfPaths.First();
                 var pageRegion = firstItem.Regions.First();
                 A.CallTo(() => healthCheckerService.IsHealthy(expectedRegionUri, A<bool>.Ignored)).MustHaveHappenedOnceExactly();
-                A.CallTo(() => appRegistryService.MarkAsHealthy(firstItem.Path, pageRegion.PageRegion)).MustHaveHappenedOnceExactly();
+                A.CallTo(() => appRegistryService.MarkRegionAsHealthy(firstItem.Path, pageRegion.PageRegion)).MustHaveHappenedOnceExactly();
             }
         }
     }

@@ -10,5 +10,7 @@ namespace DFC.Composite.HealthMonitor.Data.Models
         public Uri ExternalURL { get; set; }
 
         public IList<RegionModel> Regions { get; set; }
+
+        public IList<AjaxRequestModel> AjaxRequests { get; set; }
     }
 }

@@ -19,8 +19,8 @@ namespace DFC.Composite.HealthMonitor.Data.Models
 
         public string OfflineHtml { get; set; }
 
-        public DateTime DateOfRegistration { get; set; }
+        public DateTime? DateOfRegistration { get; set; }
 
-        public DateTime LastModifiedDate { get; set; }
+        public DateTime? LastModifiedDate { get; set; }
     }
 }
