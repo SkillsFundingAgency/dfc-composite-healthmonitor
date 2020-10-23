@@ -55,9 +55,10 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
                 new AppRegistryModel
                 {
                     Path = "Path1",
-                    Regions = new List<RegionModel>() {
-                        new RegionModel() {
-                            Path = "find-a-course",
+                    Regions = new List<RegionModel>()
+                    {
+                        new RegionModel()
+                        {
                             RegionEndpoint = expectedRegionEndpoint,
                             HealthCheckRequired = healthCheckRequired,
                             IsHealthy = isHealthy,
@@ -65,18 +66,34 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
                         },
                         new RegionModel
                         {
-                            Path = "find-a-course",
                             RegionEndpoint = expectedRegionEndpoint,
                             HealthCheckRequired = healthCheckRequired,
                             IsHealthy = isHealthy,
                             PageRegion = PageRegion.Body,
                         },
                     },
+                    AjaxRequests = new List<AjaxRequestModel>()
+                    {
+                        new AjaxRequestModel()
+                        {
+                            AjaxEndpoint = expectedRegionEndpoint,
+                            HealthCheckRequired = healthCheckRequired,
+                            IsHealthy = isHealthy,
+                            Name = "ajax-1",
+                        },
+                        new AjaxRequestModel
+                        {
+                            AjaxEndpoint = expectedRegionEndpoint,
+                            HealthCheckRequired = healthCheckRequired,
+                            IsHealthy = isHealthy,
+                            Name = "ajax-2",
+                        },
+                    },
                 },
             };
 
             A.CallTo(() => appRegistryService.GetPathsAndRegions()).Returns(listOfPaths);
-            A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored, A<bool>.Ignored)).Returns(true);
+            A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored, A<bool>.Ignored, A<string>.Ignored)).Returns(true);
 
             // Act
             await healthMonitoringProcessor.Process().ConfigureAwait(false);
@@ -87,12 +104,12 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
                 var expectedRegionUri = new Uri(expectedRegionEndpoint);
                 var firstItem = listOfPaths.First();
                 var pageRegion = firstItem.Regions.First();
-                A.CallTo(() => healthCheckerService.IsHealthy(expectedRegionUri, A<bool>.Ignored)).MustHaveHappened();
+                A.CallTo(() => healthCheckerService.IsHealthy(expectedRegionUri, A<bool>.Ignored, A<string>.Ignored)).MustHaveHappened();
                 A.CallTo(() => appRegistryService.MarkRegionAsHealthy(firstItem.Path, pageRegion.PageRegion)).MustHaveHappened();
             }
             else
             {
-                A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored, A<bool>.Ignored)).MustNotHaveHappened();
+                A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored, A<bool>.Ignored, A<string>.Ignored)).MustNotHaveHappened();
                 A.CallTo(() => appRegistryService.MarkRegionAsHealthy(A<string>.Ignored, A<PageRegion>.Ignored)).MustNotHaveHappened();
             }
         }
@@ -101,28 +118,39 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
         [MemberData(nameof(PathExternalUrls))]
         public async Task ProcessWhenHasExternalUrlThenRegionsNotMarkedAsHealthy(string externalUrl, bool pathHasExternalUrl)
         {
-            const string expectedRegionEndpoint = "https://expectedHost/regionEndpoint";
             // Arrange
+            const string expectedRegionEndpoint = "https://expectedHost/regionEndpoint";
             var listOfPaths = new List<AppRegistryModel>
             {
                 new AppRegistryModel
                 {
                     Path = "Path1",
                     ExternalURL = new Uri(externalUrl, UriKind.RelativeOrAbsolute),
-                    Regions = new List<RegionModel>() {
-                        new RegionModel() {
-                            Path = "find-a-course",
+                    Regions = new List<RegionModel>()
+                    {
+                        new RegionModel()
+                        {
                             RegionEndpoint = expectedRegionEndpoint,
                             HealthCheckRequired = true,
                             IsHealthy = false,
                             PageRegion = PageRegion.Body,
                         },
                     },
+                    AjaxRequests = new List<AjaxRequestModel>()
+                    {
+                        new AjaxRequestModel()
+                        {
+                            AjaxEndpoint = expectedRegionEndpoint,
+                            HealthCheckRequired = true,
+                            IsHealthy = false,
+                            Name = "ajax-1",
+                        },
+                    },
                 },
             };
 
             A.CallTo(() => appRegistryService.GetPathsAndRegions()).Returns(listOfPaths);
-            A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored, A<bool>.Ignored)).Returns(true);
+            A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored, A<bool>.Ignored, A<string>.Ignored)).Returns(true);
 
             // Act
             await healthMonitoringProcessor.Process().ConfigureAwait(false);
@@ -131,15 +159,17 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
             if (pathHasExternalUrl)
             {
                 A.CallTo(() => appRegistryService.MarkRegionAsHealthy(A<string>.Ignored, A<PageRegion>.Ignored)).MustNotHaveHappened();
-                A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored, A<bool>.Ignored)).MustNotHaveHappened();
+                A.CallTo(() => healthCheckerService.IsHealthy(A<Uri>.Ignored, A<bool>.Ignored, A<string>.Ignored)).MustNotHaveHappened();
             }
             else
             {
                 var expectedRegionUri = new Uri(expectedRegionEndpoint);
                 var firstItem = listOfPaths.First();
                 var pageRegion = firstItem.Regions.First();
-                A.CallTo(() => healthCheckerService.IsHealthy(expectedRegionUri, A<bool>.Ignored)).MustHaveHappenedOnceExactly();
+                var ajaxRequest = firstItem.AjaxRequests.First();
+                A.CallTo(() => healthCheckerService.IsHealthy(expectedRegionUri, A<bool>.Ignored, A<string>.Ignored)).MustHaveHappenedTwiceExactly();
                 A.CallTo(() => appRegistryService.MarkRegionAsHealthy(firstItem.Path, pageRegion.PageRegion)).MustHaveHappenedOnceExactly();
+                A.CallTo(() => appRegistryService.MarkAjaxRequestAsHealthy(firstItem.Path, ajaxRequest.Name)).MustHaveHappenedOnceExactly();
             }
         }
     }

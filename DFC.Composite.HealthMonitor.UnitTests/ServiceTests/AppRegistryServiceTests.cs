@@ -35,7 +35,7 @@ namespace DFC.Composite.HealthMonitor.UnitTests.ServiceTests
                 new AppRegistryModel
                 {
                     Path = "Path2",
-                    Regions = new List<RegionModel>() { regionHead},
+                    Regions = new List<RegionModel>() { regionHead },
                 },
             };
             var content = new StringContent(JsonConvert.SerializeObject(listOfPaths), Encoding.Default, "application/json");
@@ -79,7 +79,7 @@ namespace DFC.Composite.HealthMonitor.UnitTests.ServiceTests
         [Theory]
         [InlineData(true, HttpStatusCode.OK)]
         [InlineData(false, HttpStatusCode.BadRequest)]
-        public async Task MarkAsHealthyReturnsAppropriateResponseWhenPatchMessageSent(bool success, HttpStatusCode statusCode)
+        public async Task MarkRegionAsHealthyReturnsAppropriateResponseWhenPatchMessageSent(bool success, HttpStatusCode statusCode)
         {
             // Arrange
             var httpClientFactory = A.Fake<IHttpClientFactory>();
@@ -102,7 +102,7 @@ namespace DFC.Composite.HealthMonitor.UnitTests.ServiceTests
         }
 
         [Fact]
-        public async Task MarkAsHealthyCatchesExceoptionTest()
+        public async Task MarkRegionAsHealthyCatchesExceoptionTest()
         {
             // Arrange
             var httpClientFactory = A.Fake<IHttpClientFactory>();
@@ -114,6 +114,49 @@ namespace DFC.Composite.HealthMonitor.UnitTests.ServiceTests
 
             // Act
             var response = await appRegistryService.MarkRegionAsHealthy("path1", PageRegion.Body).ConfigureAwait(false);
+
+            // Assert
+            Assert.False(response);
+        }
+
+        [Theory]
+        [InlineData(true, HttpStatusCode.OK)]
+        [InlineData(false, HttpStatusCode.BadRequest)]
+        public async Task MarkAjaxRequestAsHealthyReturnsAppropriateResponseWhenPatchMessageSent(bool success, HttpStatusCode statusCode)
+        {
+            // Arrange
+            var httpClientFactory = A.Fake<IHttpClientFactory>();
+            using var httpResponse = new HttpResponseMessage { StatusCode = statusCode };
+            var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
+            var fakeILogger = A.Fake<ILogger<AppRegistryService>>();
+            using var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+            using var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = new Uri("http://baseaddress.com") };
+
+            A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
+            A.CallTo(() => httpClientFactory.CreateClient(A<string>.Ignored)).Returns(httpClient);
+
+            var appRegistryService = new AppRegistryService(httpClientFactory, fakeILogger);
+
+            // Act
+            var response = await appRegistryService.MarkAjaxRequestAsHealthy("path1", "ajax-1").ConfigureAwait(false);
+
+            // Assert
+            Assert.Equal(success, response);
+        }
+
+        [Fact]
+        public async Task MarkAjaxRequestAsHealthyCatchesExceoptionTest()
+        {
+            // Arrange
+            var httpClientFactory = A.Fake<IHttpClientFactory>();
+            var fakeILogger = A.Fake<ILogger<AppRegistryService>>();
+
+            A.CallTo(() => httpClientFactory.CreateClient(A<string>.Ignored)).Throws<HttpRequestException>();
+
+            var appRegistryService = new AppRegistryService(httpClientFactory, fakeILogger);
+
+            // Act
+            var response = await appRegistryService.MarkAjaxRequestAsHealthy("path1", "ajax-1").ConfigureAwait(false);
 
             // Assert
             Assert.False(response);
