@@ -1,15 +1,14 @@
-﻿using DFC.Composite.HealthMonitor.Data.Enums;
-using System;
+﻿using System;
 
 namespace DFC.Composite.HealthMonitor.Data.Models
 {
-    public class RegionModel
+    public class AjaxRequestModel
     {
-        public PageRegion PageRegion { get; set; }
+        public string Name { get; set; }
 
-        public bool IsHealthy { get; set; }
+        public bool IsHealthy { get; set; } = true;
 
-        public string RegionEndpoint { get; set; }
+        public string AjaxEndpoint { get; set; }
 
         public bool HealthCheckRequired { get; set; }
 

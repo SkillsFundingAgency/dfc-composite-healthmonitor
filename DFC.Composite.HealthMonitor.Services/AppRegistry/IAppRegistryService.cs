@@ -9,6 +9,8 @@ namespace DFC.Composite.HealthMonitor.Services.AppRegistry
     {
         Task<IEnumerable<AppRegistryModel>> GetPathsAndRegions();
 
-        Task<bool> MarkAsHealthy(string path, PageRegion pageRegion);
+        Task<bool> MarkRegionAsHealthy(string path, PageRegion pageRegion);
+
+        Task<bool> MarkAjaxRequestAsHealthy(string path, string name);
     }
 }

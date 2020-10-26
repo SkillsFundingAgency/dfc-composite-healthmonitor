@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using System;
 using System.Net.Http;
-using System.Net.Mime;
 using System.Threading.Tasks;
 
 namespace DFC.Composite.HealthMonitor.Services.HealthCheck
@@ -19,12 +18,12 @@ namespace DFC.Composite.HealthMonitor.Services.HealthCheck
             this.logger = logger;
         }
 
-        public async Task<bool> IsHealthy(Uri url, bool treatNotFoundAsSuccessCode)
+        public async Task<bool> IsHealthy(Uri url, bool treatNotFoundAsSuccessCode, string mediaTypeName)
         {
             try
             {
                 var client = httpClientFactory.CreateClient(HttpClientName.Health);
-                client.DefaultRequestHeaders.Add(HeaderNames.Accept, MediaTypeNames.Text.Html);
+                client.DefaultRequestHeaders.Add(HeaderNames.Accept, mediaTypeName);
 
                 var response = await client.GetAsync(url).ConfigureAwait(false);
                 return ValidateResponse(url, response, treatNotFoundAsSuccessCode);
