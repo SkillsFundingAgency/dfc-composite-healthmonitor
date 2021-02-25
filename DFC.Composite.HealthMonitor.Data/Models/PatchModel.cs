@@ -1,6 +1,6 @@
 ﻿namespace DFC.Composite.HealthMonitor.Data.Models
 {
-    public class RegionPatch
+    public class PatchModel
     {
         public bool IsHealthy { get; set; }
     }

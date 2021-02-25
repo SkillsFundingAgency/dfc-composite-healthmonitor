@@ -5,6 +5,6 @@ namespace DFC.Composite.HealthMonitor.Services.HealthCheck
 {
     public interface IHealthCheckerService
     {
-        Task<bool> IsHealthy(Uri url, bool treatNotFoundAsSuccessCode);
+        Task<bool> IsHealthy(Uri url, bool treatNotFoundAsSuccessCode, string mediaTypeName);
     }
 }
