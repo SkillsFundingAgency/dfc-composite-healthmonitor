@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -38,7 +39,7 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
             var service = new HealthCheckerService(httpClientFactory, defaultLogger);
 
             // Act
-            var result = await service.IsHealthy(new Uri("http://someRegionEndpoint"), treatNotFoundAsSuccessCode).ConfigureAwait(false);
+            var result = await service.IsHealthy(new Uri("http://someRegionEndpoint"), treatNotFoundAsSuccessCode, MediaTypeNames.Text.Html).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(isHealthy, result);
@@ -52,7 +53,7 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
             A.CallTo(() => httpClientFactory.CreateClient(A<string>.Ignored)).Throws<Exception>();
             var service = new HealthCheckerService(httpClientFactory, defaultLogger);
 
-            var result = await service.IsHealthy(new Uri("http://someRegionEndpoint"), false).ConfigureAwait(false);
+            var result = await service.IsHealthy(new Uri("http://someRegionEndpoint"), false, MediaTypeNames.Text.Html).ConfigureAwait(false);
 
             // Assert
             Assert.False(result);

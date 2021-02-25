@@ -30,13 +30,30 @@ namespace DFC.Composite.HealthMonitor.Services.AppRegistry
             return await response.Content.ReadAsAsync<IEnumerable<AppRegistryModel>>().ConfigureAwait(false);
         }
 
-        public async Task<bool> MarkAsHealthy(string path, PageRegion pageRegion)
+        public async Task<bool> MarkRegionAsHealthy(string path, PageRegion pageRegion)
         {
             var url = $"appregistry/{path}/regions/{(int)pageRegion}";
 
             try
             {
-                var model = new JsonPatchDocument<RegionPatch>().Add(x => x.IsHealthy, true);
+                var model = new JsonPatchDocument<PatchModel>().Add(x => x.IsHealthy, true);
+                var response = await httpClientFactory.CreateClient(HttpClientName.AppRegistry).PatchAsJsonAsync(url, model).ConfigureAwait(false);
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"Error from Health checking url '{url}'");
+                return false;
+            }
+        }
+
+        public async Task<bool> MarkAjaxRequestAsHealthy(string path, string name)
+        {
+            var url = $"appregistry/{path}/ajaxrequests/{name}";
+
+            try
+            {
+                var model = new JsonPatchDocument<PatchModel>().Add(x => x.IsHealthy, true);
                 var response = await httpClientFactory.CreateClient(HttpClientName.AppRegistry).PatchAsJsonAsync(url, model).ConfigureAwait(false);
                 return response.IsSuccessStatusCode;
             }
