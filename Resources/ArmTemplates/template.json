@@ -25,10 +25,6 @@
             "type": "string",
             "defaultValue": ""
         },
-        "aspInstances": {
-            "type": "int",
-            "defaultValue": 2
-        },
         "aspSize": {
             "type": "string",
             "defaultValue": ""
@@ -62,9 +58,6 @@
         "resourcePrefix": "[tolower(concat('dfc-', parameters('Environment'), '-compui-health'))]",
         "functionAppName": "[concat(variables('resourcePrefix'), '-fa')]",
         "functionAppInsightsName": "[concat(variables('resourcePrefix'), '-fa-ai')]",
-        "IsDraftEnvironment": "[endsWith(toLower(parameters('Environment')), '-draft')]",
-        "CompositePathUrl": "[concat(parameters('ApimProxyAddress'), '/composite-ui-paths', if(variables('IsDraftEnvironment'), '-draft', ''), '/')]",
-        "CompositeRegionUrl": "[concat(parameters('ApimProxyAddress'), '/composite-ui-regions', if(variables('IsDraftEnvironment'), '-draft', ''), '/')]",
         "ActionGroupName": "[concat('dfc-', replace(tolower(parameters('Environment')), '-draft', ''), '-compui-shared-actgrp')]"
     },
     "resources": [
@@ -93,7 +86,7 @@
                         "value": "[parameters('aspSize')]"
                     },
                     "aspInstances": {
-                        "value": "[parameters('aspInstances')]"
+                        "value": 1
                     },
                     "nonASETier": {
                         "value": "[parameters('aspTier')]"
@@ -180,14 +173,6 @@
                             {
                                 "name": "ApimSubscriptionKey",
                                 "value": "[parameters('ApimKey')]"
-                            },
-                            {
-                                "name": "PathsBaseUrl",
-                                "value": "[variables('CompositePathUrl')]"
-                            },
-                            {
-                                "name": "RegionsBaseUrl",
-                                "value": "[variables('CompositeRegionUrl')]"
                             },
                             {
                                 "name": "AppRegistryBaseUrl",
