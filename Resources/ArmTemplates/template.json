@@ -14,6 +14,9 @@
         "compuiSharedResourceGroup": {
             "type": "string"
         },
+        "compuiAppRegistryPath": {
+            "type": "string"
+        },
         "compuiSharedStorageAccountName": {
             "type": "string"
         },
@@ -176,7 +179,7 @@
                             },
                             {
                                 "name": "AppRegistryBaseUrl",
-                                "value": "[concat(parameters('ApimProxyAddress'), '/composite-ui-appRegistry/')]"
+                                "value": "[concat(parameters('ApimProxyAddress'), '/',parameters('compuiAppRegistryPath'),'/')]"
                             }
                         ]
                     }
