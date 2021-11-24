@@ -17,6 +17,9 @@
         "compuiSharedStorageAccountName": {
             "value": "dfcdevcompuisharedstr"
         },
+        "compuiAppRegistryPath": {
+            "value": "compuiAppRegistryPath"
+        },
         "environment": {
             "value": "FOO"
         },

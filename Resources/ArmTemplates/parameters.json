@@ -17,6 +17,9 @@
         "compuiSharedStorageAccountName": {
             "value": "__CompositeUiSharedStorageAccountName__"
         },
+        "compuiAppRegistryPath": {
+            "value": "__compuiAppRegistryPath__"
+        },
         "aseHostingEnvironmentName": {
             "value": "__aseHostingEnvironmentName__"
         },
