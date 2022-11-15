@@ -49,7 +49,7 @@ namespace DFC.Composite.HealthMonitor.Services.HealthMonitoring
         {
             foreach (var region in regions)
             {
-                var regionHealthEndpoint = new Uri(region.RegionEndpoint.Replace("{0}", $"{nameof(HealthMonitoringProcessor)}.{nameof(ProcessRegions)}.{Guid.NewGuid().ToString()}", StringComparison.OrdinalIgnoreCase));
+                var regionHealthEndpoint = new Uri(region.RegionEndpoint.Replace("{0}", $"{{}}", StringComparison.OrdinalIgnoreCase));
 
                 var isHealthy = await healthCheckerService.IsHealthy(regionHealthEndpoint, region.PageRegion == Data.Enums.PageRegion.Body, MediaTypeNames.Text.Html).ConfigureAwait(false);
                 if (isHealthy)
@@ -65,7 +65,7 @@ namespace DFC.Composite.HealthMonitor.Services.HealthMonitoring
         {
             foreach (var ajaxRequest in ajaxRequests)
             {
-                var ajaxRequestHealthEndpoint = new Uri(ajaxRequest.AjaxEndpoint.Replace("{0}", $"{nameof(HealthMonitoringProcessor)}.{nameof(ProcessAjaxRequests)}.{Guid.NewGuid().ToString()}", StringComparison.OrdinalIgnoreCase));
+                var ajaxRequestHealthEndpoint = new Uri(ajaxRequest.AjaxEndpoint.Replace("{0}", $"{{}}", StringComparison.OrdinalIgnoreCase));
 
                 var isHealthy = await healthCheckerService.IsHealthy(ajaxRequestHealthEndpoint, true, MediaTypeNames.Application.Json).ConfigureAwait(false);
                 if (isHealthy)
