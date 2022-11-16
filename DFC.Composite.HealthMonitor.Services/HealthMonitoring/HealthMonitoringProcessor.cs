@@ -65,7 +65,7 @@ namespace DFC.Composite.HealthMonitor.Services.HealthMonitoring
         {
             foreach (var ajaxRequest in ajaxRequests)
             {
-                var ajaxRequestHealthEndpoint = new Uri(ajaxRequest.AjaxEndpoint.Replace("{0}", $"{nameof(HealthMonitoringProcessor)}.{nameof(ProcessAjaxRequests)}.{Guid.NewGuid().ToString()}", StringComparison.OrdinalIgnoreCase));
+                var ajaxRequestHealthEndpoint = new Uri(ajaxRequest.AjaxEndpoint.Replace("{0}", $"{{}}", StringComparison.OrdinalIgnoreCase));
 
                 var isHealthy = await healthCheckerService.IsHealthy(ajaxRequestHealthEndpoint, true, MediaTypeNames.Application.Json).ConfigureAwait(false);
                 if (isHealthy)
