@@ -49,7 +49,7 @@ namespace DFC.Composite.HealthMonitor.Services.HealthMonitoring
         {
             foreach (var region in regions)
             {
-                var regionHealthEndpoint = new Uri(region.RegionEndpoint.Replace("{0}", $"{{nameof(HealthMonitoringProcessor)}.{nameof(ProcessRegions)}.{Guid.NewGuid().ToString()}}", StringComparison.OrdinalIgnoreCase));
+                var regionHealthEndpoint = new Uri(region.RegionEndpoint.Replace("{0}", $"{nameof(HealthMonitoringProcessor)}.{nameof(ProcessRegions)}.{Guid.NewGuid().ToString()}", StringComparison.OrdinalIgnoreCase));
 
                 var isHealthy = await healthCheckerService.IsHealthy(regionHealthEndpoint, region.PageRegion == Data.Enums.PageRegion.Body, MediaTypeNames.Text.Html).ConfigureAwait(false);
                 if (isHealthy)
