@@ -2,6 +2,9 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "appInsightsInstrumentationKey":{
+            "type": "string"
+        },
         "ApimProxyAddress": {
             "type": "string"
         },
@@ -14,6 +17,9 @@
         "compuiSharedResourceGroup": {
             "type": "string"
         },
+        "compuiAppRegistryPath": {
+            "type": "string"
+        },
         "compuiSharedStorageAccountName": {
             "type": "string"
         },
@@ -24,10 +30,6 @@
         "aseResourceGroup": {
             "type": "string",
             "defaultValue": ""
-        },
-        "aspInstances": {
-            "type": "int",
-            "defaultValue": 2
         },
         "aspSize": {
             "type": "string",
@@ -61,11 +63,9 @@
         "buildingBlocksDfcBaseUrl": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
         "resourcePrefix": "[tolower(concat('dfc-', parameters('Environment'), '-compui-health'))]",
         "functionAppName": "[concat(variables('resourcePrefix'), '-fa')]",
-        "functionAppInsightsName": "[concat(variables('resourcePrefix'), '-fa-ai')]",
-        "IsDraftEnvironment": "[endsWith(toLower(parameters('Environment')), '-draft')]",
-        "CompositePathUrl": "[concat(parameters('ApimProxyAddress'), '/composite-ui-paths', if(variables('IsDraftEnvironment'), '-draft', ''), '/')]",
-        "CompositeRegionUrl": "[concat(parameters('ApimProxyAddress'), '/composite-ui-regions', if(variables('IsDraftEnvironment'), '-draft', ''), '/')]",
-        "ActionGroupName": "[concat('dfc-', replace(tolower(parameters('Environment')), '-draft', ''), '-compui-shared-actgrp')]"
+        //"functionAppInsightsName": "[concat(variables('resourcePrefix'), '-fa-ai')]",
+        "ActionGroupName": "[concat('dfc-', replace(tolower(parameters('Environment')), '-draft', ''), '-compui-shared-actgrp')]",
+        "FunctionAppInsightInstrumentationKey":"[parameters('appInsightsInstrumentationKey')]"
     },
     "resources": [
         {
@@ -93,7 +93,7 @@
                         "value": "[parameters('aspSize')]"
                     },
                     "aspInstances": {
-                        "value": "[parameters('aspInstances')]"
+                        "value": 1
                     },
                     "nonASETier": {
                         "value": "[parameters('aspTier')]"
@@ -101,26 +101,7 @@
                 }
             }
         },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "[variables('functionAppInsightsName')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('buildingBlocksDfcBaseUrl'), 'application-insights.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appInsightsName": {
-                        "value": "[variables('functionAppInsightsName')]"
-                    },
-                    "attachedService": {
-                        "value": "[variables('functionAppName')]"
-                    }
-                }
-            }
-        },
+        
         {
             "apiVersion": "2017-05-10",
             "name": "[variables('functionAppName')]",
@@ -167,7 +148,7 @@
                             },
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference(variables('functionAppInsightsName')).outputs.InstrumentationKey.value]"
+                                 "value": "[variables('FunctionAppInsightInstrumentationKey')]"
                             },
                             {
                                 "name": "AzureWebJobsStorage",
@@ -182,107 +163,14 @@
                                 "value": "[parameters('ApimKey')]"
                             },
                             {
-                                "name": "PathsBaseUrl",
-                                "value": "[variables('CompositePathUrl')]"
-                            },
-                            {
-                                "name": "RegionsBaseUrl",
-                                "value": "[variables('CompositeRegionUrl')]"
-                            },
-                            {
                                 "name": "AppRegistryBaseUrl",
-                                "value": "[concat(parameters('ApimProxyAddress'), '/composite-ui-appRegistry/')]"
+                                "value": "[concat(parameters('ApimProxyAddress'), '/',parameters('compuiAppRegistryPath'),'/')]"
                             }
                         ]
                     }
                 }
-            },
-            "dependsOn": [
-                "[variables('functionAppInsightsName')]"
-            ]
-        },
-        {
-          "apiVersion": "2019-05-01",
-          "name": "[concat(variables('functionAppInsightsName'), '-metric-exceptions')]",
-          "type": "Microsoft.Resources/deployments",
-          "dependsOn": [
-              "[variables('functionAppInsightsName')]"
-          ],
-          "properties": {
-              "mode": "Incremental",
-              "templateLink": {
-                  "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'Application-Insights/metric-alerts.json')]",
-                  "contentVersion": "1.0.0.0"
-              },
-              "parameters": {
-                  "enabled": {
-                      "value": "[parameters('enableAlerts')]"
-                  },
-                  "alertName": {
-                      "value": "[concat(variables('functionAppInsightsName'), '-metric-exceptions')]"
-                  },
-                  "alertSeverity": {
-                      "value": 3
-                  },
-                  "metricName": {
-                      "value": "exceptions/count"
-                  },
-                  "operator": {
-                      "value": "GreaterThan"
-                  },
-                  "threshold": {
-                      "value": "0"
-                  },
-                  "aggregation": {
-                      "value": "Count"
-                  },
-                  "windowSize": {
-                      "value": "PT5M"
-                  },
-                  "evaluationFrequency": {
-                      "value": "PT1M"
-                  },
-                  "actionGroupName": {
-                      "value": "[variables('ActionGroupName')]"
-                  },
-                  "actionGroupResourceGroup": {
-                      "value": "[parameters('compuiSharedResourceGroup')]"
-                  },
-                  "resourceId": {
-                      "value": "[resourceId('Microsoft.Insights/Components', variables('functionAppInsightsName'))]"
-                  }
-              }
-          }
-      },
-      {
-          "apiVersion": "2019-05-01",
-          "name": "[concat(variables('functionAppInsightsName'), '-failure-anomaly-v2')]",
-          "type": "Microsoft.Resources/deployments",
-          "dependsOn": [
-              "[variables('functionAppInsightsName')]"
-          ],
-          "properties": {
-              "mode": "Incremental",
-              "templateLink": {
-                  "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'Application-Insights/failure-anomaly-rule.json')]",
-                  "contentVersion": "1.0.0.0"
-              },
-              "parameters": {
-                  "alertName": {
-                      "value": "[concat(variables('functionAppInsightsName'), '-failure-anomaly-v2')]"
-                  },
-                  "enabled": {
-                      "value": "[parameters('enableAlerts')]"
-                  },
-                  "resourceId": {
-                      "value": "[resourceId('Microsoft.Insights/Components', variables('functionAppInsightsName'))]"
-                  },
-                  "actionGroupId": {
-                      "value": "[resourceId(parameters('compuiSharedResourceGroup'), 'microsoft.insights/actionGroups', variables('ActionGroupName'))]"
-                  }
-              }
-          }
-      }
+            }
+        }
     ],
     "outputs": {}
 }

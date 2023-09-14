@@ -17,6 +17,9 @@
         "compuiSharedStorageAccountName": {
             "value": "__CompositeUiSharedStorageAccountName__"
         },
+        "compuiAppRegistryPath": {
+            "value": "__compuiAppRegistryPath__"
+        },
         "aseHostingEnvironmentName": {
             "value": "__aseHostingEnvironmentName__"
         },
@@ -43,6 +46,9 @@
         },
         "enableAlerts": {
             "value": __EnableAzureMonitorAlerting__
-        }
+        },
+        "appInsightsInstrumentationKey": {
+          "value": "__appInsightsInstrumentationKey__" 
+        }  
     }
 }
