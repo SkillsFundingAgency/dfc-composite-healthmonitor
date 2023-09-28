@@ -18,7 +18,7 @@ namespace DFC.Composite.HealthMonitor.Services.HealthCheck
             this.logger = logger;
         }
 
-        public async Task<bool> IsHealthy(Uri url, bool treatNotFoundAsSuccessCode, string mediaTypeName)
+        public async Task<bool> IsHealthy(Uri url, string mediaTypeName)
         {
             try
             {
@@ -26,7 +26,7 @@ namespace DFC.Composite.HealthMonitor.Services.HealthCheck
                 client.DefaultRequestHeaders.Add(HeaderNames.Accept, mediaTypeName);
 
                 var response = await client.GetAsync(url).ConfigureAwait(false);
-                return ValidateResponse(url, response, treatNotFoundAsSuccessCode);
+                return ValidateResponse(url, response);
             }
             catch (Exception ex)
             {
@@ -35,14 +35,14 @@ namespace DFC.Composite.HealthMonitor.Services.HealthCheck
             }
         }
 
-        private bool ValidateResponse(Uri url, HttpResponseMessage response, bool treatNotFoundAsSuccessCode)
+        private bool ValidateResponse(Uri url, HttpResponseMessage response)
         {
             if (response.IsSuccessStatusCode)
             {
                 return true;
             }
 
-            if (response.StatusCode == System.Net.HttpStatusCode.NotFound && treatNotFoundAsSuccessCode)
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
                 logger.LogWarning($"Response from Health checking url '{url}' returned {response?.StatusCode.ToString()}, but for this region is treated as a success code");
                 return true;
