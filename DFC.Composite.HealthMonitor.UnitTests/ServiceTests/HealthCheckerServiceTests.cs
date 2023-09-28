@@ -21,12 +21,11 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
         }
 
         [Theory]
-        [InlineData(true, HttpStatusCode.OK, false)]
-        [InlineData(true, HttpStatusCode.NoContent, false)]
-        [InlineData(false, HttpStatusCode.NotFound, false)]
-        [InlineData(true, HttpStatusCode.NotFound, true)]
-        [InlineData(false, HttpStatusCode.BadRequest, false)]
-        public async Task IsHealthyReturnsTrueWhenSuccessResultFromChildApp(bool isHealthy, HttpStatusCode statusCode, bool treatNotFoundAsSuccessCode)
+        [InlineData(true, HttpStatusCode.OK)]
+        [InlineData(true, HttpStatusCode.NoContent)]
+        [InlineData(true, HttpStatusCode.NotFound)]
+        [InlineData(false, HttpStatusCode.BadRequest)]
+        public async Task IsHealthyReturnsTrueWhenSuccessResultFromChildApp(bool isHealthy, HttpStatusCode statusCode)
         {
             // Arrange
             var httpClientFactory = A.Fake<IHttpClientFactory>();
@@ -39,7 +38,7 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
             var service = new HealthCheckerService(httpClientFactory, defaultLogger);
 
             // Act
-            var result = await service.IsHealthy(new Uri("http://someRegionEndpoint"), treatNotFoundAsSuccessCode, MediaTypeNames.Text.Html).ConfigureAwait(false);
+            var result = await service.IsHealthy(new Uri("http://someRegionEndpoint"), MediaTypeNames.Text.Html).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(isHealthy, result);
@@ -53,7 +52,7 @@ namespace DFC.Composite.HealthMonitor.Tests.ServiceTests
             A.CallTo(() => httpClientFactory.CreateClient(A<string>.Ignored)).Throws<Exception>();
             var service = new HealthCheckerService(httpClientFactory, defaultLogger);
 
-            var result = await service.IsHealthy(new Uri("http://someRegionEndpoint"), false, MediaTypeNames.Text.Html).ConfigureAwait(false);
+            var result = await service.IsHealthy(new Uri("http://someRegionEndpoint"), MediaTypeNames.Text.Html).ConfigureAwait(false);
 
             // Assert
             Assert.False(result);
