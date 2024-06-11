@@ -40,6 +40,9 @@
         "environment": {
             "type": "string"
         },
+        "functionAppName": {
+            "type": "string"
+        },
         "sharedAppServicePlanName": {
             "type": "string",
             "defaultValue": ""
@@ -66,7 +69,6 @@
         "appServicePlanResourceGroup": "[if(greater(length(parameters('SharedAppServicePlanResourceGroup')), 0), parameters('SharedAppServicePlanResourceGroup'), resourceGroup().name)]",
         "buildingBlocksDfcBaseUrl": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
         "resourcePrefix": "[tolower(concat('dfc-', parameters('Environment'), '-compui-health'))]",
-        "functionAppName": "[concat(variables('resourcePrefix'), '-fa')]",
         "functionAppInsightsName": "[concat(variables('resourcePrefix'), '-fa-ai')]",
         "IsDraftEnvironment": "[endsWith(toLower(parameters('Environment')), '-draft')]",
         "CompositePathUrl": "[concat(parameters('ApimProxyAddress'), '/composite-ui-paths', if(variables('IsDraftEnvironment'), '-draft', ''), '/')]",
@@ -122,7 +124,7 @@
                         "value": "[variables('functionAppInsightsName')]"
                     },
                     "attachedService": {
-                        "value": "[variables('functionAppName')]"
+                        "value": "[parameters('functionAppName')]"
                     },
                     "workspaceName": {
                         "value": "[parameters('workspaceName')]"
@@ -135,7 +137,7 @@
         },
         {
             "apiVersion": "2017-05-10",
-            "name": "[variables('functionAppName')]",
+            "name": "[parameters('functionAppName')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -145,7 +147,7 @@
                 },
                 "parameters": {
                     "appServiceName": {
-                        "value": "[variables('functionAppName')]"
+                        "value": "[parameters('functionAppName')]"
                     },
                     "appServicePlanName": {
                         "value": "[variables('appServicePlanName')]"
