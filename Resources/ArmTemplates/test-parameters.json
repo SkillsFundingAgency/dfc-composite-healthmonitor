@@ -20,6 +20,9 @@
         "environment": {
             "value": "FOO"
         },
+        "functionAppName": {
+            "value": "dfc-foo-compui-health-fa-ver"
+        },
         "sharedAppServicePlanName": {
             "value": "dfc-dev-compui-shared-asp"
         },
